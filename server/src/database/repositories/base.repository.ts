@@ -1,28 +1,23 @@
-import { PrismaService } from '../prisma.service';
-
 export class BaseRepository<T> {
-  constructor(
-    private model: any,
-    protected prisma: PrismaService,
-  ) {}
+  constructor(protected delegate: any) {}
 
-  async findAll(): Promise<T[]> {
-    return this.prisma[this.model].findMany();
+  findAll(): Promise<T[]> {
+    return this.delegate.findMany();
   }
 
-  async findById(id: string): Promise<T | null> {
-    return this.prisma[this.model].findUnique({ where: { id } });
+  findById(id: string): Promise<T | null> {
+    return this.delegate.findUnique({ where: { id } });
   }
 
-  async create(data: any): Promise<T> {
-    return this.prisma[this.model].create({ data });
+  create(data: any): Promise<T> {
+    return this.delegate.create({ data });
   }
 
-  async update(id: string, data: any) {
-    return this.prisma[this.model].update({ where: { id }, data });
+  update(id: string, data: any): Promise<T> {
+    return this.delegate.update({ where: { id }, data });
   }
 
-  async delete(id: string) {
-    return this.prisma[this.model].delete({ where: { id } });
+  delete(id: string): Promise<T> {
+    return this.delegate.delete({ where: { id } });
   }
 }

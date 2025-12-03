@@ -5,10 +5,10 @@ import { PrismaService } from '../prisma.service';
 @Injectable()
 export class HabitDayRepository extends BaseRepository<any> {
   constructor(prisma: PrismaService) {
-    super('habitDay', prisma);
+    super(prisma.habitDay);
   }
 
   async findByUserHabit(userHabitId: string) {
-    return this.prisma['habitDay'].findMany({ where: { userHabitId } });
+    return this.delegate.findMany({ where: { userHabitId } });
   }
 }

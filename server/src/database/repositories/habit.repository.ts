@@ -5,10 +5,10 @@ import { BaseRepository } from './base.repository';
 @Injectable()
 export class HabitRepository extends BaseRepository<any> {
   constructor(prisma: PrismaService) {
-    super('habit', prisma);
+    super(prisma.habit);
   }
 
   async findByName(name: string) {
-    return this.prisma['habit'].findUnique({ where: { name } });
+    return this.delegate.findUnique({ where: { name } });
   }
 }

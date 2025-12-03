@@ -3,6 +3,6 @@ export class UserEntity {
   username: string;
   email: string;
   passwordHash: string;
-  createdAt: Date;
+  createdAt?: Date;
   deletedAt?: Date | null;
 }

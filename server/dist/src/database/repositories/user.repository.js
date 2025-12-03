@@ -12,15 +12,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserRepository = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma.service");
-let UserRepository = class UserRepository {
-    prisma;
+const base_repository_1 = require("./base.repository");
+let UserRepository = class UserRepository extends base_repository_1.BaseRepository {
     constructor(prisma) {
-        this.prisma = prisma;
+        super(prisma.user);
     }
-    async findById(id) {
-        return this.prisma.user.findFirst({
-            where: { id },
-        });
+    async findByEmail(email) {
+        return this.delegate.findUnique({ where: { email } });
+    }
+    async findByUsername(username) {
+        return this.delegate.findUnique({ where: { username } });
     }
 };
 exports.UserRepository = UserRepository;

@@ -7,10 +7,10 @@
  *
  * 🟢 You can import this file directly.
  */
-export type * from './models/User.js'
-export type * from './models/Habit.js'
-export type * from './models/UserHabit.js'
-export type * from './models/Category.js'
-export type * from './models/HabitLog.js'
-export type * from './models/HabitDay.js'
-export type * from './commonInputTypes.js'
+export type * from './models/User'
+export type * from './models/Habit'
+export type * from './models/UserHabit'
+export type * from './models/Category'
+export type * from './models/HabitLog'
+export type * from './models/HabitDay'
+export type * from './commonInputTypes'

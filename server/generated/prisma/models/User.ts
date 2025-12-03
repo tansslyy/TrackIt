@@ -8,8 +8,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/library"
-import type * as $Enums from "../enums.js"
-import type * as Prisma from "../internal/prismaNamespace.js"
+import type * as $Enums from "../enums"
+import type * as Prisma from "../internal/prismaNamespace"
 
 /**
  * Model User
@@ -244,7 +244,7 @@ export type UserCreateInput = {
   username: string
   email: string
   passwordHash: string
-  createdAt: Date | string
+  createdAt?: Date | string
   deletedAt?: Date | string | null
   habits?: Prisma.UserHabitCreateNestedManyWithoutUserInput
 }
@@ -254,7 +254,7 @@ export type UserUncheckedCreateInput = {
   username: string
   email: string
   passwordHash: string
-  createdAt: Date | string
+  createdAt?: Date | string
   deletedAt?: Date | string | null
   habits?: Prisma.UserHabitUncheckedCreateNestedManyWithoutUserInput
 }
@@ -284,7 +284,7 @@ export type UserCreateManyInput = {
   username: string
   email: string
   passwordHash: string
-  createdAt: Date | string
+  createdAt?: Date | string
   deletedAt?: Date | string | null
 }
 
@@ -369,7 +369,7 @@ export type UserCreateWithoutHabitsInput = {
   username: string
   email: string
   passwordHash: string
-  createdAt: Date | string
+  createdAt?: Date | string
   deletedAt?: Date | string | null
 }
 
@@ -378,7 +378,7 @@ export type UserUncheckedCreateWithoutHabitsInput = {
   username: string
   email: string
   passwordHash: string
-  createdAt: Date | string
+  createdAt?: Date | string
   deletedAt?: Date | string | null
 }
 
