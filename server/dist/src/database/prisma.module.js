@@ -9,14 +9,39 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PrismaModule = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("./prisma.service");
+const user_repository_1 = require("./repositories/user.repository");
+const user_habit_repository_1 = require("./repositories/user-habit.repository");
+const base_repository_1 = require("./repositories/base.repository");
+const category_repository_1 = require("./repositories/category.repository");
+const habit_day_repository_1 = require("./repositories/habit-day.repository");
+const habit_log_repository_1 = require("./repositories/habit-log.repository");
+const habit_repository_1 = require("./repositories/habit.repository");
 let PrismaModule = class PrismaModule {
 };
 exports.PrismaModule = PrismaModule;
 exports.PrismaModule = PrismaModule = __decorate([
     (0, common_1.Global)(),
     (0, common_1.Module)({
-        providers: [prisma_service_1.PrismaService],
-        exports: [prisma_service_1.PrismaService],
+        providers: [
+            prisma_service_1.PrismaService,
+            user_repository_1.UserRepository,
+            user_habit_repository_1.UserHabitRepository,
+            base_repository_1.BaseRepository,
+            category_repository_1.CategoryRepository,
+            habit_day_repository_1.HabitDayRepository,
+            habit_log_repository_1.HabitLogRepository,
+            habit_repository_1.HabitRepository,
+        ],
+        exports: [
+            prisma_service_1.PrismaService,
+            user_repository_1.UserRepository,
+            user_habit_repository_1.UserHabitRepository,
+            base_repository_1.BaseRepository,
+            category_repository_1.CategoryRepository,
+            habit_day_repository_1.HabitDayRepository,
+            habit_log_repository_1.HabitLogRepository,
+            habit_repository_1.HabitRepository,
+        ],
     })
 ], PrismaModule);
 //# sourceMappingURL=prisma.module.js.map

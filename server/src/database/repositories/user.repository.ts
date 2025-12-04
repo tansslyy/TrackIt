@@ -2,20 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { BaseRepository } from './base.repository';
 import { UserEntity } from '../entities';
-
-const prisma = new PrismaService();
+import { User } from 'generated/prisma';
 
 @Injectable()
-export class UserRepository extends BaseRepository<any> {
+export class UserRepository extends BaseRepository<User> {
   constructor(prisma: PrismaService) {
-    super('user', prisma);
+    super(prisma.user);
   }
 
-  async findByEmail(email: string) {
-    return this.prisma['user'].findUnique({ where: email });
+  async findByEmail(email: string): Promise<UserEntity | null> {
+    return this.delegate.findUnique({ where: { email } });
   }
 
-  async findByUsername(username: string) {
-    return this.prisma['user'].findUnique({ where: username });
+  async findByUsername(username: string): Promise<UserEntity | null> {
+    return this.delegate.findUnique({ where: { username } });
   }
 }
