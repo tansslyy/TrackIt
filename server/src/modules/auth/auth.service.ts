@@ -7,7 +7,6 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { NotRegisteredException } from 'src/common/exceptions/not-registered.exception';
 import { EntityNotFoundException } from 'src/common/exceptions/entity-not-found.exception';
-import { match } from 'assert';
 
 @Injectable()
 export class AuthService {
