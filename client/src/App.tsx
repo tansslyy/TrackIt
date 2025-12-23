@@ -7,7 +7,7 @@ import { RegisterPage } from "./pages/AuthPages/RegisterPage";
 function App() {
   const { isAuth, isLoading } = useAuth();
   if (isLoading) {
-    return <div>Завантаження...</div>;
+    return <div>Loading...</div>;
   }
   return (
     <Routes>

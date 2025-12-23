@@ -1,7 +1,6 @@
 .page {
   min-height: 100vh;
   width: 100%;
-  /* Глибокий фіолетовий градієнт */
   background: radial-gradient(circle at top right, #4a00e0, transparent),
               radial-gradient(circle at bottom left, #8e2de2, #0f0c29);
   background-color: #0f0c29;
@@ -90,7 +89,7 @@
 
 .langSwitch {
   display: flex;
-  background: rgba(255, 255, 255, 0.1); /* Напівпрозорий фон контейнера */
+  background: rgba(255, 255, 255, 0.1); 
   padding: 4px;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -99,7 +98,7 @@
 .langBtn {
   background: transparent;
   border: none;
-  color: rgba(255, 255, 255, 0.6); /* Неактивна мова - напівпрозора */
+  color: rgba(255, 255, 255, 0.6); 
   padding: 6px 12px;
   border-radius: 8px;
   font-size: 0.85rem;

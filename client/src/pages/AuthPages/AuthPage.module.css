@@ -198,14 +198,14 @@
 .input:focus {
   outline: none;
   background: rgba(0, 0, 0, 0.4);
-  border-color: #8b5cf6; /* Фіолетовий акцент */
+  border-color: #8b5cf6; 
   box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
 }
 
 .submitBtn {
   width: 100%;
   padding: 1rem;
-  background: white; /* Біла кнопка для максимального контрасту */
+  background: white; 
   color: #0f0c29;
   border: none;
   border-radius: 14px;
