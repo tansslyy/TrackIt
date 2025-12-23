@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = async () => {
-    await authService.logout(); // Бекенд видаляє куку
+    await authService.logout();
     setUser(null);
   };
 

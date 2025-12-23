@@ -3,7 +3,6 @@ import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./AuthPage.module.css";
 
-// 1. Словник перекладів
 const translations = {
   ua: {
     title: "З поверненням",
@@ -40,7 +39,6 @@ const translations = {
 };
 
 export const LoginPage = () => {
-  // Стейт для мови
   const [lang, setLang] = useState<"en" | "ua">("en");
   const t = translations[lang];
 
@@ -68,7 +66,6 @@ export const LoginPage = () => {
 
   return (
     <div className={styles.page}>
-      {/* 2. Перемикач мови (Top Right) */}
       <div className={styles.langWrapper}>
         <div className={styles.langSwitch}>
           <button

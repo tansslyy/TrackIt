@@ -68,18 +68,14 @@ const translations = {
 const HomePage = () => {
   const { isAuth, user, logout } = useAuth();
 
-  // Стан мови: за замовчуванням 'en' (англійська)
   const [lang, setLang] = useState<"en" | "ua">("en");
 
-  // Функція для зміни мови
   const toggleLang = () => setLang((prev) => (prev === "en" ? "ua" : "en"));
 
-  // Скорочення для доступу до текстів поточної мови
   const t = translations[lang];
 
   return (
     <div className={styles.page}>
-      {/* HEADER */}
       <header className={styles.header}>
         <div className={styles.headerContainer}>
           <div className={styles.logo}>
@@ -88,9 +84,7 @@ const HomePage = () => {
           </div>
 
           <nav style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-            {/* Перемикач мови (Простий і стильний) */}
             <div className={styles.langSimple}>
-              {/* Замість старої кнопки встав цей блок */}
               <div className={styles.langSwitch}>
                 <button
                   className={`${styles.langBtn} ${
@@ -169,9 +163,7 @@ const HomePage = () => {
             </div>
           </div>
         ) : (
-          // --- VIEW ДЛЯ ГОСТЯ ---
           <div className={styles.heroGrid}>
-            {/* ЛІВА КОЛОНКА: ТЕКСТ */}
             <div className={styles.heroContent}>
               <h1 className={styles.title} style={{ whiteSpace: "pre-line" }}>
                 {t.heroGuest.title}
@@ -196,10 +188,8 @@ const HomePage = () => {
               </div>
             </div>
 
-            {/* ПРАВА КОЛОНКА: ВІЗУАЛ */}
             <div className={styles.heroVisual}>
               <div className={styles.previewContainer}>
-                {/* Картка 1 */}
                 <div className={styles.habitMockup}>
                   <h4>🏃‍♂️ {t.mockups.run}</h4>
                   <div className={styles.progressBar}>
@@ -222,7 +212,6 @@ const HomePage = () => {
                   </div>
                 </div>
 
-                {/* Картка 2 */}
                 <div className={styles.habitMockup}>
                   <h4>💧 {t.mockups.water}</h4>
                   <div className={styles.progressBar}>
@@ -245,7 +234,6 @@ const HomePage = () => {
                   </div>
                 </div>
 
-                {/* Картка 3 */}
                 <div className={styles.habitMockup}>
                   <h4>📚 {t.mockups.read}</h4>
                   <div className={styles.progressBar}>

@@ -1,4 +1,5 @@
-import axios, { type AxiosResponse } from "axios";
+import axios, { AxiosError, type AxiosResponse } from "axios";
+import toast from "react-hot-toast";
 
 export const instance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -10,10 +11,25 @@ export const instance = axios.create({
 
 instance.interceptors.response.use(
   (response: AxiosResponse) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      console.log("User is not authorized");
+  (error: AxiosError<any>) => {
+    const status = error.response?.status;
+    const message = error.response?.data?.message || "Something went wrong";
+
+    if (!status) {
+      toast.error("Помилка мережі");
+      return Promise.reject(error);
     }
+
+    if (status === 401) {
+      toast.error("Ви не авторизовані");
+    } else if (status === 403) {
+      toast.error("Недостатньо прав");
+    } else if (status >= 500) {
+      toast.error("Помилка сервера");
+    } else {
+      toast.error(message);
+    }
+
     return Promise.reject(error);
   }
 );

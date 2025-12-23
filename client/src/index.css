@@ -4,27 +4,25 @@
   font-weight: 400;
 }
 
-/* Скидання всіх відступів */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Робимо body на весь екран */
+
 body {
   margin: 0;
   padding: 0;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #0f0c29; /* Темний колір, щоб не блимало білим */
+  background-color: #0f0c29; 
 }
 
-/* Робимо кореневий елемент на весь екран */
 #root {
   width: 100%;
   min-height: 100vh;
   margin: 0;
   padding: 0;
-  text-align: left; /* Скасовуємо центрування тексту, якщо воно було */
+  text-align: left;
 }
