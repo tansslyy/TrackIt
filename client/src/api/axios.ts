@@ -21,9 +21,12 @@ instance.interceptors.response.use(
     const message = data?.message || "Something went wrong.";
 
     if (status === 401) {
-      toast.error("You are not authorized. Please log in again.");
-
-      window.location.href = "/login";
+      // ПЕРЕВІРКА: Робимо редірект тільки якщо ми НЕ на сторінці логіна
+      if (window.location.pathname !== "/login") {
+        toast.error("You are not authorized. Please log in again.");
+        window.location.href = "/login";
+      }
+      // Якщо ми вже на логіні — просто ігноруємо редірект, щоб не було циклу
     } else if (status === 403) {
       toast.error("You do not have permission to perform this action.");
     } else if (status >= 500) {

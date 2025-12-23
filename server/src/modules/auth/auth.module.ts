@@ -6,8 +6,7 @@ import { PassportModule } from '@nestjs/passport';
 import { UserRepository } from 'src/database/repositories/user.repository';
 import { PrismaService } from 'src/database/prisma.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtStrategy } from '../security/strategies';
-import { config } from 'dotenv';
+import { JwtStrategy } from 'src/security/strategies/jwt.strategy';
 
 @Module({
   imports: [
