@@ -34,7 +34,11 @@ export class AuthService {
     return userWithoutHash;
   }
 
-  async register({ username, email, password }: RegisterDto): Promise<void> {
+  async register({
+    username,
+    email,
+    password,
+  }: RegisterDto): Promise<{ token: string }> {
     const existingUser = await this.userRepository.findByEmail(email);
     if (existingUser) {
       throw new AlreadyRegisteredException();
@@ -42,9 +46,14 @@ export class AuthService {
 
     const passwordHash = await this.hashPassword(password);
 
-    const data = { username, email, passwordHash };
+    const newUser = await this.userRepository.create({
+      username,
+      email,
+      passwordHash,
+    });
+    const token = this.generateToken(newUser.id);
 
-    await this.userRepository.create(data);
+    return { token };
   }
 
   async login({ username, password }: LoginDto): Promise<{ token: string }> {

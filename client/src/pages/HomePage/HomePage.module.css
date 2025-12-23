@@ -1,0 +1,297 @@
+.page {
+  min-height: 100vh;
+  width: 100%;
+  background: radial-gradient(circle at top right, #4a00e0, transparent),
+              radial-gradient(circle at bottom left, #8e2de2, #0f0c29);
+  background-color: #0f0c29;
+  position: relative;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.bgDecoration1, .bgDecoration2 {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.bgDecoration1 {
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, rgba(118, 75, 162, 0.25) 0%, transparent 70%);
+  top: -20%;
+  right: -10%;
+  animation: float 15s infinite alternate ease-in-out;
+}
+
+.bgDecoration2 {
+  width: 40vw;
+  height: 40vw;
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.2) 0%, transparent 70%);
+  bottom: -10%;
+  left: -10%;
+  animation: float 12s infinite alternate-reverse ease-in-out;
+}
+
+@keyframes float {
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(30px, -30px) scale(1.1); }
+}
+
+.header {
+  padding: 1.2rem 0;
+  width: 100%;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.headerContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.logoIcon {
+  background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+  color: #4f46e5;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(165, 180, 252, 0.3);
+}
+
+.langSimple {
+  display: flex;
+  align-items: center;
+}
+
+.langSwitch {
+  display: flex;
+  background: rgba(255, 255, 255, 0.1); 
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.langBtn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6); 
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.langBtn:hover {
+  color: white;
+}
+
+.langBtnActive {
+  background: white; 
+  color: #4f46e5;    
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.authButtons { 
+  display: flex; 
+  gap: 1rem; 
+  align-items: center; 
+}
+
+.loginBtn {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.8rem 1.5rem;
+  transition: opacity 0.2s;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+}
+
+.registerBtn {
+  background: white;
+  color: #4f46e5;
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 700;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 2px solid transparent;
+}
+
+.registerBtn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(255, 255, 255, 0.2);
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  z-index: 1;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  width: 100%;
+}
+
+.heroContent {
+  text-align: left;
+  animation: slideRight 0.8s ease-out;
+}
+
+.title {
+  font-size: clamp(3rem, 5vw, 5rem);
+  font-weight: 900;
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+  background: linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0.7) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.description {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+  max-width: 550px;
+}
+
+.featuresRow {
+  display: flex;
+  gap: 1rem;
+  margin-top: 3rem;
+  flex-wrap: wrap;
+}
+
+.featureBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+}
+
+.heroVisual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  animation: slideLeft 0.8s ease-out 0.2s backwards;
+}
+
+.previewContainer {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  height: 400px;
+}
+
+.habitMockup {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.95);
+  color: #1a1a1a;
+  padding: 1.2rem;
+  border-radius: 20px;
+  width: 260px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+
+/* Анімація карток */
+.habitMockup:nth-child(1) { top: 0; right: 0; z-index: 2; animation: floatCard 6s ease-in-out infinite; }
+.habitMockup:nth-child(2) { top: 120px; left: 0; z-index: 3; animation: floatCard 7s ease-in-out infinite 0.5s; }
+.habitMockup:nth-child(3) { bottom: 20px; right: 40px; z-index: 1; opacity: 0.9; animation: floatCard 8s ease-in-out infinite 1s; }
+
+.habitMockup:hover {
+  transform: scale(1.05) !important;
+  z-index: 10;
+}
+
+.habitMockup h4 { margin: 0 0 0.5rem 0; font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 8px;}
+
+.progressBar {
+  height: 6px;
+  background: #f0f0f0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border-radius: 10px;
+}
+
+@keyframes slideRight { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes slideLeft { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes floatCard { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+@media (max-width: 968px) {
+  .heroGrid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    text-align: center;
+  }
+  
+  .heroContent {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .previewContainer {
+    height: 320px;
+    margin: 0 auto;
+  }
+
+  .featuresRow {
+    justify-content: center;
+  }
+  
+  .authButtons {
+    gap: 0.5rem;
+  }
+}

@@ -1,0 +1,357 @@
+/* src/pages/AuthPage.module.css */
+
+* {
+  box-sizing: border-box;
+}
+
+.page {
+  min-height: 100vh;
+  width: 100%;
+  /* Глибокий, багатий фон замість суцільного кольору */
+  background: radial-gradient(circle at top center, #1e1b4b, #0f0c29, #000000);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* --- ФОНОВІ ЕФЕКТИ (AURORA) --- */
+/* Видаляємо .bgGrid, замість нього робимо м'які переливи */
+
+.bgGlow1 {
+  position: absolute;
+  width: 800px; /* Більший розмір для м'якості */
+  height: 800px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 60%);
+  top: -20%;
+  left: -10%;
+  filter: blur(100px); /* Сильніше розмиття */
+  animation: float 15s ease-in-out infinite;
+  z-index: 0;
+  opacity: 0.6;
+}
+
+.bgGlow2 {
+  position: absolute;
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, transparent 60%);
+  bottom: -10%;
+  right: -5%;
+  filter: blur(100px);
+  animation: float 18s ease-in-out infinite reverse;
+  z-index: 0;
+  opacity: 0.6;
+}
+
+/* Додаткова "пляма" для глибини по центру */
+.bgGlow3 {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.08) 0%, transparent 60%);
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  filter: blur(120px);
+  animation: pulse 10s ease-in-out infinite;
+  z-index: 0;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(30px, 40px); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+/* --- КОНТЕЙНЕР --- */
+.container {
+  width: 100%;
+  max-width: 440px; /* Трохи ширше для солідності */
+  position: relative;
+  z-index: 10;
+}
+
+/* --- LOGO --- */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 2.5rem;
+  text-decoration: none;
+  justify-content: center;
+  transition: opacity 0.3s;
+}
+
+.logo:hover {
+  opacity: 0.8;
+}
+
+.logoIconWrapper {
+  width: 44px;
+  height: 44px;
+  /* Градієнт логотипу */
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25); /* Світіння */
+}
+
+.logoSvg {
+  width: 24px;
+  height: 24px;
+  color: white;
+}
+
+.logoText {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: white;
+  letter-spacing: -0.5px;
+}
+
+/* --- КАРТКА (MATTE GLASS) --- */
+.card {
+  background: rgba(255, 255, 255, 0.03); /* Дуже прозора основа */
+  backdrop-filter: blur(24px); /* Сильне розмиття фону */
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08); /* Тонка рамка */
+  /* Внутрішнє світіння для об'єму */
+  box-shadow: 
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 25px 50px -12px rgba(0, 0, 0, 0.5); 
+  border-radius: 28px;
+  padding: 3rem 2.5rem;
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cardHeader {
+  margin-bottom: 2.5rem;
+  text-align: center;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.5;
+}
+
+/* --- ФОРМА --- */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  padding-left: 4px;
+}
+
+.input {
+  width: 100%;
+  padding: 1rem 1.2rem;
+  /* Темніший фон полів для кращого контрасту тексту */
+  background: rgba(0, 0, 0, 0.2); 
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  color: white;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.input:focus {
+  outline: none;
+  background: rgba(0, 0, 0, 0.4);
+  border-color: #8b5cf6; 
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 1rem;
+  background: white; 
+  color: #0f0c29;
+  border: none;
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 0.5rem;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.submitBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.15);
+}
+
+.submitBtn:active:not(:disabled) {
+  transform: translateY(0);
+  background: #f3f4f6;
+}
+
+.submitBtn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+/* --- FOOTER --- */
+.footer {
+  margin-top: 2rem;
+  text-align: center;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footerText {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.95rem;
+}
+
+.footerLink {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 6px;
+  position: relative;
+}
+
+.footerLink::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  bottom: -2px;
+  left: 0;
+  background-color: white;
+  transform: scaleX(0);
+  transition: transform 0.2s ease;
+}
+
+.footerLink:hover::after {
+  transform: scaleX(1);
+}
+
+/* --- ERROR --- */
+.error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: #fca5a5;
+  padding: 0.9rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.errorIcon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* --- SPINNER --- */
+.spinner {
+  width: 22px;
+  height: 22px;
+  border: 2px solid rgba(15, 12, 41, 0.2);
+  border-top-color: #0f0c29;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* --- LANG SWITCHER --- */
+.langWrapper {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  z-index: 20;
+}
+
+.langSwitch {
+  display: flex;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+}
+
+.langBtn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.langBtn:hover { color: rgba(255, 255, 255, 0.8); }
+
+.langBtnActive {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* --- MOBILE --- */
+@media (max-width: 640px) {
+  .page { padding: 1.5rem; }
+  .card { padding: 2rem 1.5rem; }
+  .langWrapper { top: 1.5rem; right: 1.5rem; }
+  .title { font-size: 1.6rem; }
+}
