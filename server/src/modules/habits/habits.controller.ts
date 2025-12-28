@@ -26,12 +26,8 @@ export class HabitsController {
   constructor(private readonly habitsService: HabitsService) {}
 
   @Post()
-  create(@Req() req: RequestWithUser, @Body() dto: CreateHabitDto) {
-    if (dto.habitId) {
-      return this.habitsService.addFromLibrary(req.user.id, dto);
-    } else {
-      return this.habitsService.createCustom(req.user.id, dto);
-    }
+  create(@Body() dto: CreateHabitDto) {
+    return this.habitsService.createHabit(dto);
   }
 
   @Get('library')

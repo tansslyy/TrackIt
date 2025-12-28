@@ -7,59 +7,17 @@ import { PrismaService } from 'src/database/prisma.service';
 export class HabitsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createCustom(userId: string, dto: CreateHabitDto) {
+  async createHabit(dto: CreateHabitDto) {
     if (!dto.name) {
-      throw new BadRequestException('To create a new habit, you need a name ');
-    }
-    return this.prisma.$transaction(async (tx) => {
-      const newHabit = await tx.habit.create({
-        data: {
-          name: dto.name!,
-          description: dto.description,
-          isDefault: false,
-        },
-      });
-
-      const userHabit = await tx.userHabit.create({
-        data: {
-          userId: userId,
-          habitId: newHabit.id,
-          repeatType: dto.repeatType,
-          startDate: new Date(),
-          days: dto.days?.length
-            ? {
-                create: dto.days.map((day) => ({ dayOfWeek: day })),
-              }
-            : undefined,
-        },
-        include: {
-          habit: true,
-          days: true,
-        },
-      });
-
-      return userHabit;
-    });
-  }
-
-  async addFromLibrary(userId: string, dto: CreateHabitDto) {
-    if (!dto.habitId) {
-      throw new BadRequestException(
-        'To add from the library, you need habitId',
-      );
+      throw new BadRequestException('Habit name is required');
     }
 
-    return this.prisma.userHabit.create({
+    return this.prisma.habit.create({
       data: {
-        userId: userId,
-        habitId: dto.habitId,
-        repeatType: dto.repeatType,
-        startDate: new Date(),
-        days: dto.days?.length
-          ? { create: dto.days.map((day) => ({ dayOfWeek: day })) }
-          : undefined,
+        name: dto.name,
+        description: dto.description,
+        isDefault: false,
       },
-      include: { habit: true, days: true },
     });
   }
 
