@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "prisma:seed": "dotenv -e .env -- ts-node --transpile-only prisma/seed.ts",
     "prisma:generate": "dotenv -e .env -- npx prisma generate",
     "prisma:studio": "dotenv -e .env -- npx prisma studio",
     "migration:run": "dotenv -e .env -- npx prisma migrate deploy",
@@ -28,6 +29,7 @@
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
     "@nestjs/jwt": "^11.0.1",
+    "@nestjs/mapped-types": "*",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
     "@prisma/adapter-pg": "^7.2.0",
