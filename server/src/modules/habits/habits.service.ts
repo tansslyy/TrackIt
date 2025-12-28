@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateHabitDto } from './dto/create-habit.dto';
 import { UpdateHabitDto } from './dto/update-habit.dto';
 import { PrismaService } from 'src/database/prisma.service';
@@ -7,29 +7,23 @@ import { PrismaService } from 'src/database/prisma.service';
 export class HabitsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(userId: string, dto: CreateHabitDto) {
+  async createCustom(userId: string, dto: CreateHabitDto) {
+    if (!dto.name) {
+      throw new BadRequestException('To create a new habit, you need a name ');
+    }
     return this.prisma.$transaction(async (tx) => {
-      let habitId = dto.habitId;
-
-      if (!habitId) {
-        if (!dto.name) {
-          throw new Error('Name is required for custom habits');
-        }
-
-        const newHabit = await tx.habit.create({
-          data: {
-            name: dto.name,
-            description: dto.description,
-            isDefault: false,
-          },
-        });
-        habitId = newHabit.id;
-      }
+      const newHabit = await tx.habit.create({
+        data: {
+          name: dto.name!,
+          description: dto.description,
+          isDefault: false,
+        },
+      });
 
       const userHabit = await tx.userHabit.create({
         data: {
           userId: userId,
-          habitId: habitId!,
+          habitId: newHabit.id,
           repeatType: dto.repeatType,
           startDate: new Date(),
           days: dto.days?.length
@@ -45,6 +39,27 @@ export class HabitsService {
       });
 
       return userHabit;
+    });
+  }
+
+  async addFromLibrary(userId: string, dto: CreateHabitDto) {
+    if (!dto.habitId) {
+      throw new BadRequestException(
+        'To add from the library, you need habitId',
+      );
+    }
+
+    return this.prisma.userHabit.create({
+      data: {
+        userId: userId,
+        habitId: dto.habitId,
+        repeatType: dto.repeatType,
+        startDate: new Date(),
+        days: dto.days?.length
+          ? { create: dto.days.map((day) => ({ dayOfWeek: day })) }
+          : undefined,
+      },
+      include: { habit: true, days: true },
     });
   }
 
