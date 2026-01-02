@@ -84,7 +84,7 @@ model HabitLog {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  userHabit UserHabit @relation(fields: [userHabitId], references: [id])
+  userHabit UserHabit @relation(fields: [userHabitId], references: [id], onDelete: Cascade)
 
   @@map("habit_logs")
 }
@@ -104,7 +104,7 @@ model HabitDay {
   userHabitId String    @map("user_habit_id")
   dayOfWeek   DayOfWeek @map("day_of_week")
 
-  userHabit UserHabit @relation(fields: [userHabitId], references: [id])
+  userHabit UserHabit @relation(fields: [userHabitId], references: [id], onDelete: Cascade)
 
   @@map("habit_days")
 }

@@ -56,12 +56,16 @@ export class HabitsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateHabitDto: UpdateHabitDto) {
-    return this.habitsService.update(+id, updateHabitDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateHabitDto: UpdateHabitDto,
+    @Req() req: RequestWithUser,
+  ) {
+    return this.habitsService.update(req.user.id, id, updateHabitDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.habitsService.remove(+id);
+  remove(@Param('id') id: string, @Req() req: RequestWithUser) {
+    return this.habitsService.remove(req.user.id, id);
   }
 }
