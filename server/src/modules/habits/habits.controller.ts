@@ -26,13 +26,18 @@ export class HabitsController {
   constructor(private readonly habitsService: HabitsService) {}
 
   @Post()
-  create(@Body() dto: CreateHabitDto) {
-    return this.habitsService.createHabit(dto);
+  create(@Body() dto: CreateHabitDto, @Req() req: RequestWithUser) {
+    return this.habitsService.createOrLinkHabit(req.user.id, dto);
   }
 
   @Get('library')
   findLibrary() {
     return this.habitsService.findLibrary();
+  }
+
+  @Patch(':id/toggle')
+  toggleCompletion(@Param('id') id: string, @Req() req: RequestWithUser) {
+    return this.habitsService.toggleCompletion(req.user.id, id);
   }
 
   @Get()
