@@ -81,7 +81,7 @@ model HabitLog {
   date        DateTime
   userHabitId String   @map("user_habit_id")
   status      Status   @default(NOT_COMPLETED)
-  createdAt   DateTime @map("created_at")
+  createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   userHabit UserHabit @relation(fields: [userHabitId], references: [id])
