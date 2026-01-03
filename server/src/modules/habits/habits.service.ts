@@ -206,10 +206,7 @@ export class HabitsService {
         },
       });
 
-      if (
-        userHabit.habit.isDefault === false &&
-        (dto.name || dto.description)
-      ) {
+      if (!userHabit.habit.isDefault && (dto.name || dto.description)) {
         await tx.habit.update({
           where: { id: userHabit.habitId },
           data: {
@@ -231,8 +228,12 @@ export class HabitsService {
       where: { id: habitId },
     });
 
-    if (!userHabit || userHabit.userId !== userId) {
-      throw new BadRequestException('Access denied or habit not found');
+    if (!userHabit) {
+      throw new BadRequestException('No habit found with this ID');
+    }
+
+    if (userHabit.userId !== userId) {
+      throw new BadRequestException('You do not have access to this habit');
     }
 
     return this.prisma.userHabit.delete({
