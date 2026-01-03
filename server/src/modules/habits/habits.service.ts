@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateHabitDto } from './dto/create-habit.dto';
 import { UpdateHabitDto } from './dto/update-habit.dto';
 import { PrismaService } from 'src/database/prisma.service';
+import { DayOfWeek } from '@prisma/client';
 
 @Injectable()
 export class HabitsService {
@@ -16,7 +17,6 @@ export class HabitsService {
       throw new BadRequestException('Habit name is required');
     }
 
-    // розумний рошук, спочаиткут шукаємо чи є вже така звичка
     let habit = await this.prisma.habit.findFirst({
       where: {
         name: dto.name,
@@ -182,11 +182,62 @@ export class HabitsService {
     return `This action returns a #${id} habit`;
   }
 
-  update(id: number, updateHabitDto: UpdateHabitDto) {
-    return `This action updates a #${id} habit`;
+  async update(userId: string, habitId: string, dto: UpdateHabitDto) {
+    const userHabit = await this.prisma.userHabit.findUnique({
+      where: { id: habitId },
+      include: { habit: true },
+    });
+
+    if (!userHabit || userHabit.userId !== userId) {
+      throw new BadRequestException('Access denied');
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      await tx.userHabit.update({
+        where: { id: habitId },
+        data: {
+          repeatType: dto.repeatType,
+          days: dto.days
+            ? {
+                deleteMany: {},
+                create: dto.days.map((day) => ({ dayOfWeek: day })),
+              }
+            : undefined,
+        },
+      });
+
+      if (!userHabit.habit.isDefault && (dto.name || dto.description)) {
+        await tx.habit.update({
+          where: { id: userHabit.habitId },
+          data: {
+            name: dto.name,
+            description: dto.description,
+          },
+        });
+      }
+
+      return tx.userHabit.findUnique({
+        where: { id: habitId },
+        include: { habit: true, days: true },
+      });
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} habit`;
+  async remove(userId: string, habitId: string) {
+    const userHabit = await this.prisma.userHabit.findUnique({
+      where: { id: habitId },
+    });
+
+    if (!userHabit) {
+      throw new BadRequestException('No habit found with this ID');
+    }
+
+    if (userHabit.userId !== userId) {
+      throw new BadRequestException('You do not have access to this habit');
+    }
+
+    return this.prisma.userHabit.delete({
+      where: { id: habitId },
+    });
   }
 }
