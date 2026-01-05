@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { authService } from "../services/auth.service";
-import type { RegisterDto } from "../types/dtos/register.dto";
-import type { LoginDto } from "../types/dtos/login.dto";
+import type { RegisterDto } from "../types/dtos/auth/register.dto";
+import type { LoginDto } from "../types/dtos/auth/login.dto";
 import type { User } from "../types/models/user.model";
 
 interface AuthContextType {

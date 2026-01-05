@@ -1,6 +1,6 @@
 import api, { instance } from "../api/axios";
-import type { LoginDto } from "../types/dtos/login.dto";
-import type { RegisterDto } from "../types/dtos/register.dto";
+import type { LoginDto } from "../types/dtos/auth/login.dto";
+import type { RegisterDto } from "../types/dtos/auth/register.dto";
 
 export const authService = {
   async register(data: RegisterDto) {
