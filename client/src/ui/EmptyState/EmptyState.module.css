@@ -3,107 +3,68 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 6rem 2rem;
   text-align: center;
-  min-height: 500px;
-  animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  
+  padding: 4rem 2rem;
+  margin-top: 1rem;
+  width: 100%;
+  
+  /* Ефект пунктирної рамки на склі */
+  background: rgba(255, 255, 255, 0.02);
+  border: 2px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  
+  /* Розмиття фону */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  
+  transition: all 0.3s ease;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+.emptyState:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(167, 139, 250, 0.3); /* Фіолетове підсвічування рамки */
 }
 
 .iconContainer {
-  width: 160px;
-  height: 160px;
-  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(30px);
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 3rem;
-  box-shadow: 
-    0 30px 80px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  animation: float 4s ease-in-out infinite;
-  border: 2px solid rgba(255, 255, 255, 0.5);
+  margin-bottom: 1.5rem;
+  
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0) scale(1);
-  }
-  50% {
-    transform: translateY(-20px) scale(1.05);
-  }
+.emptyState:hover .iconContainer {
+  transform: scale(1.1) rotate(5deg);
+  background: rgba(167, 139, 250, 0.15); /* Фіолетовий фон при ховері */
 }
 
 .icon {
-  font-size: 5rem;
+  font-size: 2.5rem;
   line-height: 1;
-  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.15));
-  animation: pulse 3s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
+  /* Якщо це емодзі, воно буде виглядати як є. 
+     Якщо це текст, додамо колір */
+  color: #a78bfa; 
 }
 
 .title {
-  font-size: 2.25rem;
-  font-weight: 900;
-  color: white;
-  margin: 0 0 1.5rem 0;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.01em;
 }
 
 .description {
-  font-size: 1.25rem;
-  color: rgba(255, 255, 255, 0.95);
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.5);
   margin: 0;
-  max-width: 600px;
-  line-height: 1.7;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-  font-weight: 500;
-}
-
-@media (max-width: 768px) {
-  .emptyState {
-    padding: 4rem 2rem;
-    min-height: 400px;
-  }
-  
-  .iconContainer {
-    width: 120px;
-    height: 120px;
-    margin-bottom: 2.5rem;
-  }
-  
-  .icon {
-    font-size: 3.5rem;
-  }
-  
-  .title {
-    font-size: 1.75rem;
-    margin-bottom: 1.25rem;
-  }
-  
-  .description {
-    font-size: 1.0625rem;
-  }
+  line-height: 1.6;
+  max-width: 400px;
 }
