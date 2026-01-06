@@ -1,0 +1,195 @@
+.stats {
+  margin-bottom: 2.5rem;
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+.progressCard {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.progressCard:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 1.5rem;
+}
+
+.progressTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 0.25rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.progressText {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+}
+
+.progressPercentage {
+  font-size: 3.5rem; 
+  font-weight: 800;
+  line-height: 1;
+  color: #fff;
+  text-shadow: 0 4px 24px rgba(167, 139, 250, 0.4);
+}
+
+.progressBar {
+  width: 100%;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.1); 
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #a78bfa 0%, #f472b6 100%);
+  border-radius: 10px;
+  transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 15px rgba(167, 139, 250, 0.5);
+}
+
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+.statCard {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 1.5rem;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+  
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.statCard:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.statIconWrapper {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.25rem;
+  color: white;
+}
+
+.iconSuccess {
+  background: rgba(52, 211, 153, 0.15); 
+  color: #34d399;
+}
+
+.iconTotal {
+  background: rgba(167, 139, 250, 0.15); 
+  color: #a78bfa;
+}
+
+.iconRemaining {
+  background: rgba(251, 146, 60, 0.15); 
+  color: #fb923c;
+}
+
+.statValue {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+  margin: 0 0 0.25rem 0;
+}
+
+.statLabel {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0;
+}
+
+/* --- ADAPTIVE --- */
+
+@media (max-width: 768px) {
+  .progressHeader {
+    align-items: flex-start;
+    flex-direction: column-reverse;
+    gap: 0.5rem;
+  }
+  
+  .progressPercentage {
+    font-size: 3rem;
+    align-self: flex-start;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr; 
+    gap: 1rem;
+  }
+  
+  .statCard {
+    flex-direction: row; 
+    text-align: left;
+    padding: 1rem;
+    align-items: center;
+  }
+  
+  .statIconWrapper {
+    margin-bottom: 0;
+    width: 40px;
+    height: 40px;
+  }
+  
+  .statIconWrapper svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .statContent {
+    display: flex;
+    flex-direction: column-reverse; 
+  }
+  
+  .statValue {
+    font-size: 1.5rem;
+  }
+}
