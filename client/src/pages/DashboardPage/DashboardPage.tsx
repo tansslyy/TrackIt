@@ -5,6 +5,7 @@ import { HabitList } from "../../components/habits/HabitList/HabitList";
 import styles from "./DashboardPage.module.css";
 import { DashboardHeader } from "../../components/habits/DashboardHeader/DashboardHeader";
 import { DashboardStats } from "../../components/habits/DashboardStats/DashboardStats";
+import { CreateHabitModal } from "../../components/habits/CreateHabitModal/CreateHabitModal";
 
 export const DashboardPage = () => {
   const [habits, setHabits] = useState<UserHabit[]>([]);
@@ -64,12 +65,12 @@ export const DashboardPage = () => {
         />
       </div>
 
-      {/* {isModalOpen && (
+      {isModalOpen && (
         <CreateHabitModal
           onClose={() => setIsModalOpen(false)}
           onSuccess={handleCreateHabit}
         />
-      )} */}
+      )}
     </div>
   );
 };

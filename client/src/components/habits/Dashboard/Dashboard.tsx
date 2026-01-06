@@ -5,6 +5,7 @@ import styles from "./Dashboard.module.css";
 import { DashboardHeader } from "../DashboardHeader/DashboardHeader";
 import { DashboardStats } from "../DashboardStats/DashboardStats";
 import { HabitList } from "../HabitList/HabitList";
+import { CreateHabitModal } from "../CreateHabitModal/CreateHabitModal";
 
 export const Dashboard = () => {
   const [habits, setHabits] = useState<UserHabit[]>([]);
@@ -64,12 +65,12 @@ export const Dashboard = () => {
         />
       </div>
 
-      {/* {isModalOpen && (
+      {isModalOpen && (
         <CreateHabitModal
           onClose={() => setIsModalOpen(false)}
           onSuccess={handleCreateHabit}
         />
-      )} */}
+      )}
     </div>
   );
 };

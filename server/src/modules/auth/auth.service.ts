@@ -39,9 +39,16 @@ export class AuthService {
     email,
     password,
   }: RegisterDto): Promise<{ token: string }> {
-    const existingUser = await this.userRepository.findByEmail(email);
-    if (existingUser) {
-      throw new AlreadyRegisteredException();
+    const existingEmail = await this.userRepository.findByEmail(email);
+    if (existingEmail) {
+      throw new AlreadyRegisteredException(
+        'A user with this email address already exists',
+      );
+    }
+
+    const existingUsername = await this.userRepository.findByUsername(username);
+    if (existingUsername) {
+      throw new AlreadyRegisteredException('This username is already taken');
     }
 
     const passwordHash = await this.hashPassword(password);

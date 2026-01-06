@@ -78,7 +78,14 @@ export const RegisterPage = () => {
       await register({ username, email, password });
       navigate("/");
     } catch (err: any) {
-      setError(err.message || "Something went wrong.");
+      const serverMessage = err.response?.data?.message;
+      if (serverMessage) {
+        setError(
+          Array.isArray(serverMessage) ? serverMessage.join("") : serverMessage
+        );
+      } else {
+        setError(err.message || "Something went wrong");
+      }
     } finally {
       setLoading(false);
     }
