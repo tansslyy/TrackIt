@@ -1,0 +1,53 @@
+.dashboard {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #0f172a; 
+  color: #ffffff;
+  font-family: 'Inter', system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+.ambientBackground {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  background: 
+    radial-gradient(circle at 15% 50%, rgba(76, 29, 149, 0.4), transparent 45%), 
+    radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.15), transparent 40%),
+    linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  pointer-events: none; 
+}
+
+.contentContainer {
+  position: relative;
+  z-index: 1; 
+  max-width: 1000px; 
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+  box-sizing: border-box;
+}
+
+
+@media (max-width: 1024px) {
+  .contentContainer {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .contentContainer {
+    padding: 1.5rem 1rem;
+    max-width: 100%;
+  }
+}
+
+:global(:root) {
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  --primary-accent: #a78bfa;
+}
