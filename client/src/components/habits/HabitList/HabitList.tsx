@@ -8,12 +8,14 @@ interface HabitListProps {
   habits: UserHabit[];
   loading: boolean;
   onToggleComplete: (habitId: string) => void;
+  onDelete: (habitId: string) => void;
 }
 
 export const HabitList = ({
   habits,
   loading,
   onToggleComplete,
+  onDelete,
 }: HabitListProps) => {
   if (loading) {
     return <LoadingSpinner />;
@@ -39,6 +41,7 @@ export const HabitList = ({
             key={habit.id}
             habit={habit}
             onToggle={() => onToggleComplete(habit.id)}
+            onDelete={() => onDelete(habit.id)}
           />
         ))}
       </div>

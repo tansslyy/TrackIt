@@ -1,44 +1,30 @@
-import { useEffect, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import type { UserHabit } from "../../../types/models/habits/user-habit";
-import { HabitService } from "../../../services/habit.service";
 import styles from "./Dashboard.module.css";
 import { DashboardHeader } from "../DashboardHeader/DashboardHeader";
 import { DashboardStats } from "../DashboardStats/DashboardStats";
 import { HabitList } from "../HabitList/HabitList";
 import { CreateHabitModal } from "../CreateHabitModal/CreateHabitModal";
 
-export const Dashboard = () => {
-  const [habits, setHabits] = useState<UserHabit[]>([]);
-  const [loading, setLoading] = useState(true);
+interface DashboardProps {
+  habits: UserHabit[];
+  loading: boolean;
+  onToggleComplete: (id: string) => void;
+  onDelete: (id: string) => void;
+  onRefresh: () => void;
+}
+
+export const Dashboard = ({
+  habits,
+  loading,
+  onToggleComplete,
+  onDelete,
+  onRefresh,
+}: DashboardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    loadTodayHabits();
-  }, []);
-
-  const loadTodayHabits = async () => {
-    try {
-      setLoading(true);
-      const data = await HabitService.getTodayHabits();
-      setHabits(data);
-    } catch (error) {
-      console.error("Failed to load habits:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleToggleComplete = async (habitId: string) => {
-    try {
-      await HabitService.toggleComplete(habitId);
-      await loadTodayHabits();
-    } catch (error) {
-      console.error("Failed to toggle habit:", error);
-    }
-  };
-
-  const handleCreateHabit = async () => {
-    await loadTodayHabits();
+  const handleCreateSuccess = () => {
+    onRefresh();
     setIsModalOpen(false);
   };
 
@@ -61,14 +47,15 @@ export const Dashboard = () => {
         <HabitList
           habits={habits}
           loading={loading}
-          onToggleComplete={handleToggleComplete}
+          onToggleComplete={onToggleComplete}
+          onDelete={onDelete}
         />
       </div>
 
       {isModalOpen && (
         <CreateHabitModal
           onClose={() => setIsModalOpen(false)}
-          onSuccess={handleCreateHabit}
+          onSuccess={handleCreateSuccess}
         />
       )}
     </div>

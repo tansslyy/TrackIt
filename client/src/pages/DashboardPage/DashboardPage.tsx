@@ -1,20 +1,15 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { HabitService } from "../../services/habit.service";
 import type { UserHabit } from "../../types/models/habits/user-habit";
-import { HabitList } from "../../components/habits/HabitList/HabitList";
 import styles from "./DashboardPage.module.css";
-import { DashboardHeader } from "../../components/habits/DashboardHeader/DashboardHeader";
-import { DashboardStats } from "../../components/habits/DashboardStats/DashboardStats";
-import { CreateHabitModal } from "../../components/habits/CreateHabitModal/CreateHabitModal";
+import toast from "react-hot-toast";
+import { Dashboard } from "../../components/habits/Dashboard/Dashboard";
+import { ConfirmModal } from "../../components/habits/ConfirmModal/ConfirmModal";
 
 export const DashboardPage = () => {
   const [habits, setHabits] = useState<UserHabit[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  useEffect(() => {
-    loadTodayHabits();
-  }, []);
+  const [habitToDelete, setHabitToDelete] = useState<string | null>(null);
 
   const loadTodayHabits = async () => {
     try {
@@ -28,6 +23,10 @@ export const DashboardPage = () => {
     }
   };
 
+  useEffect(() => {
+    loadTodayHabits();
+  }, []);
+
   const handleToggleComplete = async (habitId: string) => {
     try {
       await HabitService.toggleComplete(habitId);
@@ -37,40 +36,43 @@ export const DashboardPage = () => {
     }
   };
 
-  const handleCreateHabit = async () => {
-    await loadTodayHabits();
-    setIsModalOpen(false);
+  const requestDelete = (habitId: string) => {
+    setHabitToDelete(habitId);
   };
 
-  const { completedCount, totalCount } = useMemo(() => {
-    return {
-      completedCount: habits.filter((h) => h.logs.length > 0).length,
-      totalCount: habits.length,
-    };
-  }, [habits]);
+  const confirmDelete = async () => {
+    if (!habitToDelete) return;
+
+    try {
+      await HabitService.delete(habitToDelete);
+      toast.success("Habit deleted");
+      setHabits((prev) => prev.filter((h) => h.id !== habitToDelete));
+    } catch (error) {
+      console.error("Failed to delete habit", error);
+      toast.error("Failed to delete");
+    } finally {
+      setHabitToDelete(null);
+    }
+  };
 
   return (
     <div className={styles.dashboardPage}>
       <div className={styles.backgroundLayer} />
 
-      <div className={styles.container}>
-        <DashboardHeader onAddHabit={() => setIsModalOpen(true)} />
-
-        <DashboardStats completed={completedCount} total={totalCount} />
-
-        <HabitList
-          habits={habits}
-          loading={loading}
-          onToggleComplete={handleToggleComplete}
-        />
-      </div>
-
-      {isModalOpen && (
-        <CreateHabitModal
-          onClose={() => setIsModalOpen(false)}
-          onSuccess={handleCreateHabit}
-        />
-      )}
+      <Dashboard
+        habits={habits}
+        loading={loading}
+        onToggleComplete={handleToggleComplete}
+        onDelete={requestDelete}
+        onRefresh={loadTodayHabits}
+      />
+      <ConfirmModal
+        isOpen={!!habitToDelete}
+        onClose={() => setHabitToDelete(null)}
+        onConfirm={confirmDelete}
+        title="Delete the habit"
+        message="Are you sure you want to delete this habit? All progress will be lost."
+      />
     </div>
   );
 };
