@@ -112,7 +112,7 @@ export class HabitsService {
 
   async findAll(userId: string) {
     return this.prisma.userHabit.findMany({
-      where: { userId, habit: { deletedAt: null } },
+      where: { userId, deletedAt: null, habit: { deletedAt: null } },
       include: {
         habit: true,
         days: true,
@@ -153,6 +153,7 @@ export class HabitsService {
     return this.prisma.userHabit.findMany({
       where: {
         userId: userId,
+        deletedAt: null,
         OR: [
           { repeatType: 'DAILY' },
           {
@@ -228,7 +229,7 @@ export class HabitsService {
       where: { id: habitId },
     });
 
-    if (!userHabit) {
+    if (!userHabit || userHabit.deletedAt) {
       throw new BadRequestException('No habit found with this ID');
     }
 
@@ -236,8 +237,11 @@ export class HabitsService {
       throw new BadRequestException('You do not have access to this habit');
     }
 
-    return this.prisma.userHabit.delete({
+    return this.prisma.userHabit.update({
       where: { id: habitId },
+      data: {
+        deletedAt: new Date(),
+      },
     });
   }
 }

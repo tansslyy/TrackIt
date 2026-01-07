@@ -53,6 +53,7 @@ model UserHabit {
   interval   Int?       @map("repeat_interval")
   startDate  DateTime?  @map("start_date")
   endDate    DateTime?  @map("end_date")
+  deletedAt  DateTime?  @map("deleted_at")
 
   user  User       @relation(fields: [userId], references: [id])
   habit Habit      @relation(fields: [habitId], references: [id])
