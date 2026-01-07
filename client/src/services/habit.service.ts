@@ -18,8 +18,12 @@ export const HabitService = {
     return data;
   },
 
-  async delete(id: string, dto: Partial<CreateHabitDto>): Promise<UserHabit> {
+  async update(id: string, dto: Partial<CreateHabitDto>): Promise<UserHabit> {
     const { data } = await instance.patch<UserHabit>(`/habits/${id}`, dto);
     return data;
+  },
+
+  async delete(id: string): Promise<void> {
+    await instance.delete(`/habits/${id}`);
   },
 };
