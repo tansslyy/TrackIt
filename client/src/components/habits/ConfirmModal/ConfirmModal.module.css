@@ -1,9 +1,9 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.7); /* Темна підкладка */
+  background: rgba(15, 23, 42, 0.7);
   backdrop-filter: blur(8px);
-  z-index: 2000; /* Має бути вище всього */
+  z-index: 2000; 
   display: flex;
   align-items: center;
   justify-content: center;
@@ -28,7 +28,7 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: rgba(239, 68, 68, 0.1); /* Червоний фон */
+  background: rgba(239, 68, 68, 0.1); 
   color: #ef4444;
   display: flex;
   align-items: center;
@@ -67,7 +67,6 @@
   transition: all 0.2s ease;
 }
 
-/* Кнопка "Скасувати" */
 .cancelBtn {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -79,7 +78,6 @@
   color: white;
 }
 
-/* Кнопка "Видалити" (Небезпечна) */
 .deleteBtn {
   background: #ef4444;
   color: white;
