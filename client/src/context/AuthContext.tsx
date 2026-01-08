@@ -21,10 +21,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const UserData = await authService.getMe();
         setUser(UserData);
       } catch (error) {
+        localStorage.removeItem("accessToken");
         setUser(null);
       } finally {
         setIsLoading(false);
@@ -46,8 +53,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = async () => {
-    await authService.logout();
-    setUser(null);
+    try {
+      await authService.logout();
+    } catch (e) {
+      console.error('"Logout error on server', e);
+    } finally {
+      localStorage.removeItem("accessToken");
+      setUser(null);
+    }
   };
 
   return (
