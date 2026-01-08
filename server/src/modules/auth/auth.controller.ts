@@ -12,8 +12,7 @@ import { AuthService } from './auth.service';
 import { LoginDto, RegisterDto } from './dtos';
 import { Request, Response } from 'express';
 import { AuthGuard } from '@nestjs/passport/dist/auth.guard';
-
-const COOKIE_EXPIRES_IN_MS = 7 * 24 * 60 * 60 * 1000;
+import { WEEK_IN_MS } from 'src/common/constants';
 
 @Controller('auth')
 export class AuthController {
@@ -29,7 +28,7 @@ export class AuthController {
       httpOnly: true,
       secure: false,
       sameSite: 'strict',
-      expires: new Date(Date.now() + COOKIE_EXPIRES_IN_MS),
+      expires: new Date(Date.now() + WEEK_IN_MS),
     });
     return { accessToken, message: 'You are registered successfully' };
   }
@@ -44,7 +43,7 @@ export class AuthController {
       httpOnly: true,
       secure: false,
       sameSite: 'strict',
-      expires: new Date(Date.now() + COOKIE_EXPIRES_IN_MS),
+      expires: new Date(Date.now() + WEEK_IN_MS),
     });
     return { accessToken, message: 'Success' };
   }
@@ -65,7 +64,7 @@ export class AuthController {
       httpOnly: true,
       secure: false,
       sameSite: 'strict',
-      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      expires: new Date(Date.now() + WEEK_IN_MS),
     });
 
     return { accessToken: tokens.accessToken };

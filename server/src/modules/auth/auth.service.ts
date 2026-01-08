@@ -8,6 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { NotRegisteredException } from 'src/common/exceptions/not-registered.exception';
 import { EntityNotFoundException } from 'src/common/exceptions/entity-not-found.exception';
 import { PrismaService } from 'src/database/prisma.service';
+import { WEEK_IN_MS } from 'src/common/constants';
 
 @Injectable()
 export class AuthService {
@@ -161,7 +162,7 @@ export class AuthService {
       data: {
         userId,
         hashedToken: hash,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        expiresAt: new Date(Date.now() + WEEK_IN_MS),
       },
     });
   }
