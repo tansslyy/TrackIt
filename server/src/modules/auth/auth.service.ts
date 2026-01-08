@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { NotRegisteredException } from 'src/common/exceptions/not-registered.exception';
 import { EntityNotFoundException } from 'src/common/exceptions/entity-not-found.exception';
+import { PrismaService } from 'src/database/prisma.service';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +15,27 @@ export class AuthService {
     private readonly userRepository: UserRepository,
     private jwtService: JwtService,
     private config: ConfigService,
+    private prisma: PrismaService,
   ) {}
+
+  async getTokens(userId: string, email: string) {
+    const payload = { sub: userId, email };
+
+    const at = await this.jwtService.signAsync(payload, {
+      expiresIn: '5s',
+      secret: this.config.get<string>('JWT_SECRET'),
+    });
+
+    const rt = await this.jwtService.signAsync(payload, {
+      expiresIn: '1m',
+      secret: this.config.get<string>('JWT_REFRESH_TOKEN'),
+    });
+
+    return {
+      accessToken: at,
+      refreshToken: rt,
+    };
+  }
 
   async validateUser(username: string, password: string) {
     const user = await this.userRepository.findByUsername(username);
@@ -34,11 +55,7 @@ export class AuthService {
     return userWithoutHash;
   }
 
-  async register({
-    username,
-    email,
-    password,
-  }: RegisterDto): Promise<{ token: string }> {
+  async register({ username, email, password }: RegisterDto) {
     const existingEmail = await this.userRepository.findByEmail(email);
     if (existingEmail) {
       throw new AlreadyRegisteredException(
@@ -58,12 +75,14 @@ export class AuthService {
       email,
       passwordHash,
     });
-    const token = this.generateToken(newUser.id);
 
-    return { token };
+    const tokens = await this.getTokens(newUser.id, newUser.email);
+    await this.saveRefreshToken(newUser.id, tokens.refreshToken);
+
+    return tokens;
   }
 
-  async login({ username, password }: LoginDto): Promise<{ token: string }> {
+  async login({ username, password }: LoginDto) {
     const user = await this.userRepository.findByUsername(username);
     if (!user) throw new NotRegisteredException();
 
@@ -71,12 +90,80 @@ export class AuthService {
     if (!isPasswordValid)
       throw new UnauthorizedException('Invalid credentials');
 
-    const token = this.generateToken(user.id);
-    return { token };
+    const tokens = await this.getTokens(user.id, user.email);
+    await this.saveRefreshToken(user.id, tokens.refreshToken);
+    return tokens;
+  }
+
+  async refreshTokens(incomingRefreshToken: string) {
+    let payload;
+    try {
+      payload = await this.jwtService.verifyAsync(incomingRefreshToken, {
+        secret: this.config.get<string>('JWT_REFRESH_TOKEN'),
+      });
+    } catch (e) {
+      throw new UnauthorizedException('Invalis Refresh Token');
+    }
+
+    const userId = payload.sub;
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        refreshToken: true,
+      },
+    });
+
+    if (!user) throw new UnauthorizedException('User not found');
+
+    const tokenFromDb = await this.findTokenInDb(
+      user.refreshToken,
+      incomingRefreshToken,
+    );
+
+    if (!tokenFromDb) {
+      throw new UnauthorizedException('Token has been revoked or invalid');
+    }
+
+    if (new Date() > tokenFromDb.expiresAt) {
+      await this.prisma.refreshToken.delete({ where: { id: tokenFromDb.id } });
+      throw new UnauthorizedException('Token expired');
+    }
+
+    await this.prisma.refreshToken.delete({ where: { id: tokenFromDb.id } });
+
+    const tokens = await this.getTokens(user.id, user.email);
+
+    await this.saveRefreshToken(user.id, tokens.refreshToken);
+    return tokens;
+  }
+
+  private async findTokenInDb(storedTokens: any[], incomingToken: string) {
+    for (const storedToken of storedTokens) {
+      const isMatch = await bcrypt.compare(
+        incomingToken,
+        storedToken.hashedToken,
+      );
+      if (isMatch) {
+        return storedToken;
+      }
+    }
+    return null;
   }
 
   generateToken(userId: string): string {
     return this.jwtService.sign({ sub: userId });
+  }
+
+  private async saveRefreshToken(userId: string, refreshToken: string) {
+    const hash = await bcrypt.hash(refreshToken, 10);
+
+    await this.prisma.refreshToken.create({
+      data: {
+        userId,
+        hashedToken: hash,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
+    });
   }
 
   private async hashPassword(password: string): Promise<string> {
