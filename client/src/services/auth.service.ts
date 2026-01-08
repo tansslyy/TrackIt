@@ -4,14 +4,16 @@ import type { RegisterDto } from "../types/dtos/auth/register.dto";
 
 export const authService = {
   async register(data: RegisterDto) {
-    return api.post("/auth/register", data);
+    const { data: responseData } = await instance.post("/auth/register", data);
+    return responseData;
   },
 
   async login(data: LoginDto) {
-    return api.post("/auth/login", data);
+    const { data: responseData } = await instance.post("/auth/login", data);
+    return responseData;
   },
   async logout() {
-    return api.post("/auth/logout");
+    return instance.post("/auth/logout");
   },
   async getMe() {
     const { data } = await instance.get("/auth/me");

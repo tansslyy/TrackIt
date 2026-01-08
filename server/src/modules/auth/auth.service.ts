@@ -22,12 +22,12 @@ export class AuthService {
     const payload = { sub: userId, email };
 
     const at = await this.jwtService.signAsync(payload, {
-      expiresIn: '5s',
+      expiresIn: '15m',
       secret: this.config.get<string>('JWT_SECRET'),
     });
 
     const rt = await this.jwtService.signAsync(payload, {
-      expiresIn: '1m',
+      expiresIn: '7d',
       secret: this.config.get<string>('JWT_REFRESH_TOKEN'),
     });
 
