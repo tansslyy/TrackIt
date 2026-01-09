@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Req,
   Res,
@@ -9,10 +10,19 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto, RegisterDto } from './dtos';
+import {
+  ForgotPasswordDTO,
+  LoginDto,
+  RegisterDto,
+  ResetPasswordDTO,
+  UpdatePasswordDTO,
+} from './dtos';
 import { Request, Response } from 'express';
 import { AuthGuard } from '@nestjs/passport/dist/auth.guard';
 import { WEEK_IN_MS } from 'src/common/constants';
+import { JwtGuard } from 'src/security/guards';
+import { AccessTokenResponse } from './responses';
+import { use } from 'passport';
 
 @Controller('auth')
 export class AuthController {
@@ -22,14 +32,9 @@ export class AuthController {
   async register(
     @Body() body: RegisterDto,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<{ accessToken: string; message: string }> {
+  ): Promise<AccessTokenResponse> {
     const { accessToken, refreshToken } = await this.authService.register(body);
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'strict',
-      expires: new Date(Date.now() + WEEK_IN_MS),
-    });
+    this.setRefreshTokenCookie(res, refreshToken);
     return { accessToken, message: 'You are registered successfully' };
   }
 
@@ -37,14 +42,9 @@ export class AuthController {
   async login(
     @Body() body: LoginDto,
     @Res({ passthrough: true }) res: Response,
-  ) {
+  ): Promise<AccessTokenResponse> {
     const { accessToken, refreshToken } = await this.authService.login(body);
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'strict',
-      expires: new Date(Date.now() + WEEK_IN_MS),
-    });
+    this.setRefreshTokenCookie(res, refreshToken);
     return { accessToken, message: 'Success' };
   }
 
@@ -52,7 +52,7 @@ export class AuthController {
   async refresh(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
-  ) {
+  ): Promise<AccessTokenResponse> {
     const refreshToken = req.cookies['refreshToken'];
     if (!refreshToken) {
       throw new UnauthorizedException('No refresh token provided');
@@ -60,14 +60,42 @@ export class AuthController {
 
     const tokens = await this.authService.refreshTokens(refreshToken);
 
-    res.cookie('refreshToken', tokens.refreshToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'strict',
-      expires: new Date(Date.now() + WEEK_IN_MS),
-    });
+    this.setRefreshTokenCookie(res, tokens.refreshToken);
 
     return { accessToken: tokens.accessToken };
+  }
+
+  @UseGuards(JwtGuard)
+  @Post('updatePassword')
+  async updatePassword(
+    @Body() body: UpdatePasswordDTO,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<AccessTokenResponse> {
+    const userId = (req.user as any).id;
+    const tokens = await this.authService.updatePassword(body, userId);
+    this.setRefreshTokenCookie(res, tokens.refreshToken);
+    return {
+      accessToken: tokens.accessToken,
+      message: 'Password updated successfully',
+    };
+  }
+
+  @Post('forgotPassword')
+  async forgotPassword(
+    @Body() body: ForgotPasswordDTO,
+  ): Promise<{ message: string }> {
+    await this.authService.forgotPassword(body.email);
+    return { message: 'Link sent to email' };
+  }
+
+  @Post('resetPassword/:token')
+  async resetPassword(
+    @Param('token') token: string,
+    @Body() body: ResetPasswordDTO,
+  ): Promise<{ message: string }> {
+    await this.authService.resetPassword(token, body.password);
+    return { message: 'Password changed successfully' };
   }
 
   @Post('logout')
@@ -80,5 +108,14 @@ export class AuthController {
   @Get('me')
   async me(@Req() req: Request) {
     return req.user;
+  }
+
+  private setRefreshTokenCookie(res: Response, token: string) {
+    res.cookie('refreshToken', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      expires: new Date(Date.now() + WEEK_IN_MS),
+    });
   }
 }
