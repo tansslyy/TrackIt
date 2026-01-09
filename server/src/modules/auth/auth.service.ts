@@ -1,6 +1,10 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserRepository } from 'src/database/repositories/user.repository';
-import { LoginDto, RegisterDto } from './dtos';
+import { LoginDto, RegisterDto, UpdatePasswordDTO } from './dtos';
 import { AlreadyRegisteredException } from 'src/common/exceptions/already-registered.exception';
 import bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
@@ -8,7 +12,12 @@ import { ConfigService } from '@nestjs/config';
 import { NotRegisteredException } from 'src/common/exceptions/not-registered.exception';
 import { EntityNotFoundException } from 'src/common/exceptions/entity-not-found.exception';
 import { PrismaService } from 'src/database/prisma.service';
-import { WEEK_IN_MS } from 'src/common/constants';
+import { HOUR, WEEK_IN_MS } from 'src/common/constants';
+import { IdenticalPasswordException } from 'src/common/exceptions';
+import { RefreshTokenRepository } from 'src/database/repositories/refresh-token.repository';
+import { EmailTokenRepository } from 'src/database/repositories/email-token.repository';
+import { TokenType } from '@prisma/client';
+import { resolve } from 'path';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +26,8 @@ export class AuthService {
     private jwtService: JwtService,
     private config: ConfigService,
     private prisma: PrismaService,
+    private readonly refreshTokenRepository: RefreshTokenRepository,
+    private readonly emailTokenRepository: EmailTokenRepository,
   ) {}
 
   async getTokens(userId: string, email: string) {
@@ -107,64 +118,144 @@ export class AuthService {
     }
 
     const userId = payload.sub;
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      include: {
-        refreshToken: true,
-      },
-    });
 
-    if (!user) throw new UnauthorizedException('User not found');
+    const tokenFromDb = await this.refreshTokenRepository.findByUserId(userId);
 
-    const tokenFromDb = await this.findTokenInDb(
-      user.refreshToken,
+    if (!tokenFromDb) throw new UnauthorizedException('Token hab been revoked');
+
+    const isMatch = await bcrypt.compare(
       incomingRefreshToken,
+      tokenFromDb.hashedToken,
     );
-
-    if (!tokenFromDb) {
-      throw new UnauthorizedException('Token has been revoked or invalid');
-    }
+    if (!isMatch) throw new UnauthorizedException('Access Denied');
 
     if (new Date() > tokenFromDb.expiresAt) {
-      await this.prisma.refreshToken.delete({ where: { id: tokenFromDb.id } });
+      await this.refreshTokenRepository.deleteByUserId(userId);
       throw new UnauthorizedException('Token expired');
     }
 
-    await this.prisma.refreshToken.delete({ where: { id: tokenFromDb.id } });
+    const tokens = await this.getTokens(userId, payload.email);
 
-    const tokens = await this.getTokens(user.id, user.email);
-
-    await this.saveRefreshToken(user.id, tokens.refreshToken);
+    await this.saveRefreshToken(userId, tokens.refreshToken);
     return tokens;
   }
 
-  private async findTokenInDb(storedTokens: any[], incomingToken: string) {
-    for (const storedToken of storedTokens) {
-      const isMatch = await bcrypt.compare(
-        incomingToken,
-        storedToken.hashedToken,
+  async updatePassword(dto: UpdatePasswordDTO, userId: string) {
+    const { oldPassword, newPassword } = dto;
+    if (oldPassword === newPassword) {
+      throw new IdenticalPasswordException(
+        'New password cannot be the same as old password',
       );
-      if (isMatch) {
-        return storedToken;
-      }
     }
-    return null;
+
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    const isOldPasswordCorrect = await bcrypt.compare(
+      oldPassword,
+      user.passwordHash,
+    );
+    if (!isOldPasswordCorrect) {
+      throw new ForbiddenException('Wrong old password');
+    }
+
+    const newPasswordHash = await this.hashPassword(newPassword);
+
+    const updateUser = await this.userRepository.update(userId, {
+      passwordHash: newPasswordHash,
+    });
+
+    const tokens = await this.getTokens(updateUser.id, updateUser.email);
+    await this.saveRefreshToken(updateUser.id, tokens.refreshToken);
+    return tokens;
   }
 
+  async forgotPassword(email: string): Promise<void> {
+    const isRegistered = await this.isRegistered('', email);
+
+    if (!isRegistered) {
+      throw new NotRegisteredException();
+    }
+
+    const token = await this.createEmailToken(email, TokenType.RESETTING);
+
+    const resetLink = `${this.config.get('FRONT_BASE_URL')}/reset-password/${token}`;
+    console.log(`
+      ============================================
+      [EMAIL STUB] To: ${email}
+      Subject: Reset Password
+      Link: ${resetLink}
+      ============================================
+      `);
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    const tokenRecord = await this.emailTokenRepository.findByToken(token);
+    if (!tokenRecord) throw new UnauthorizedException('Invalid token');
+
+    if (tokenRecord.expiresAt < new Date()) {
+      await this.emailTokenRepository.delete(token);
+      throw new UnauthorizedException('Token expired');
+    }
+
+    const user = await this.userRepository.findByEmail(tokenRecord.email);
+    if (!user) throw new EntityNotFoundException('User');
+
+    const newHash = await this.hashPassword(newPassword);
+    await this.userRepository.update(user.id, { passwordHash: newHash });
+
+    await this.emailTokenRepository.delete(token);
+    await this.refreshTokenRepository.deleteByUserId(user.id);
+  }
+
+  private async isRegistered(
+    username: string,
+    email: string,
+  ): Promise<boolean> {
+    const user = await this.userRepository.find({
+      OR: [{ username }, { email }],
+    });
+    return !!user;
+  }
   generateToken(userId: string): string {
     return this.jwtService.sign({ sub: userId });
   }
 
   private async saveRefreshToken(userId: string, refreshToken: string) {
     const hash = await bcrypt.hash(refreshToken, 10);
+    const expiresAt = new Date(Date.now() + WEEK_IN_MS);
 
-    await this.prisma.refreshToken.create({
-      data: {
+    const existingToken =
+      await this.refreshTokenRepository.findByUserId(userId);
+
+    if (existingToken) {
+      await this.refreshTokenRepository.updateByUserId(userId, hash);
+    } else {
+      await this.refreshTokenRepository.create({
         userId,
         hashedToken: hash,
-        expiresAt: new Date(Date.now() + WEEK_IN_MS),
-      },
+        expiresAt,
+      });
+    }
+  }
+
+  private async createEmailToken(
+    email: string,
+    tokenType: TokenType,
+  ): Promise<string> {
+    await this.checkIsTokenAlreadyExist(email, tokenType);
+
+    const expiresAt = new Date(Date.now() + HOUR);
+
+    const tokenRecord = await this.emailTokenRepository.create({
+      email,
+      type: tokenType,
+      expiresAt,
     });
+
+    return tokenRecord.token;
   }
 
   private async hashPassword(password: string): Promise<string> {
@@ -178,5 +269,19 @@ export class AuthService {
     hash: string,
   ): Promise<boolean> {
     return bcrypt.compare(passsword, hash);
+  }
+
+  private async checkIsTokenAlreadyExist(
+    email: string,
+    tokenType: TokenType,
+  ): Promise<void> {
+    const tokenExists = await this.emailTokenRepository.find({
+      email,
+      type: tokenType,
+    });
+
+    if (tokenExists) {
+      await this.emailTokenRepository.delete(tokenExists.token);
+    }
   }
 }

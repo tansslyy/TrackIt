@@ -7,6 +7,8 @@ import { CategoryRepository } from './repositories/category.repository';
 import { HabitDayRepository } from './repositories/habit-day.repository';
 import { HabitLogRepository } from './repositories/habit-log.repository';
 import { HabitRepository } from './repositories/habit.repository';
+import { RefreshTokenRepository } from './repositories/refresh-token.repository';
+import { EmailTokenRepository } from './repositories/email-token.repository';
 
 @Global()
 @Module({
@@ -19,6 +21,8 @@ import { HabitRepository } from './repositories/habit.repository';
     HabitDayRepository,
     HabitLogRepository,
     HabitRepository,
+    RefreshTokenRepository,
+    EmailTokenRepository,
   ],
   exports: [
     PrismaService,
@@ -29,6 +33,8 @@ import { HabitRepository } from './repositories/habit.repository';
     HabitDayRepository,
     HabitLogRepository,
     HabitRepository,
+    RefreshTokenRepository,
+    EmailTokenRepository,
   ],
 })
 export class PrismaModule {}
