@@ -1,66 +1,94 @@
 import { useState } from "react";
-import { useAuth } from "../../context/AuthContext";
-import { Link, useNavigate } from "react-router-dom";
 import styles from "./AuthPage.module.css";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { authService } from "../../services/auth.service";
+import toast from "react-hot-toast";
 
 const translations = {
   ua: {
-    title: "З поверненням",
-    subtitle: "Продовжимо роботу над твоїми цілями.",
+    title: "Новий пароль",
+    subtitle: "Введи новий пароль для свого акаунту.",
     fields: {
-      username: "Username",
-      password: "Password",
-      btn: "Увійти",
-      placeholderUser: "Твій нікнейм",
-      placeholderPass: "Твій пароль",
-      forgot: "Забули пароль?", // <--- ДОДАНО
+      password: "Новий пароль",
+      confirm: "Підтвердження паролю",
+      placeholderPass: "Твій новий пароль",
+      placeholderConfirm: "Повтори пароль",
+      btn: "Скинути пароль",
     },
+    errors: {
+      match: "Паролі не співпадають",
+      length: "Пароль надто короткий (мін. 6 символів)",
+      token: "Невалідне або застаріле посилання",
+    },
+    success: "Пароль успішно змінено! Перенаправлення...",
     footer: {
-      text: "Ще не з нами?",
-      link: "Створити акаунт",
+      text: "Згадав пароль?",
+      link: "Увійти",
     },
-    error: "Невірний логін або пароль",
   },
   en: {
-    title: "Welcome back",
-    subtitle: "Let's verify it's you and get back to tracking.",
+    title: "Reset Password",
+    subtitle: "Enter a new password for your account.",
     fields: {
-      username: "Username",
-      password: "Password",
-      btn: "Sign in",
-      placeholderUser: "Your username",
-      placeholderPass: "Your password",
-      forgot: "Forgot password?", // <--- ДОДАНО
+      password: "New Password",
+      confirm: "Confirm Password",
+      placeholderPass: "Your new password",
+      placeholderConfirm: "Repeat password",
+      btn: "Reset Password",
     },
+    errors: {
+      match: "Passwords do not match",
+      length: "Password is too short (min 6 chars)",
+      token: "Invalid or expired reset link",
+    },
+    success: "Password reset successful! Redirecting...",
     footer: {
-      text: "New to TrackIt?",
-      link: "Create account",
+      text: "Remember your password?",
+      link: "Sign in",
     },
-    error: "Invalid username or password",
   },
 };
 
-export const LoginPage = () => {
+export const ResetPasswordPage = () => {
   const [lang, setLang] = useState<"en" | "ua">("en");
   const t = translations[lang];
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const { login } = useAuth();
+  const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
-  const [error, setError] = useState("");
+
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (password !== confirmPassword) {
+      setError(t.errors.match);
+      return;
+    }
+
+    if (password.length < 8) {
+      setError(t.errors.length);
+      return;
+    }
+
+    if (!token) {
+      setError(t.errors.token);
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await login({ username, password });
-      navigate("/");
-    } catch (err) {
-      setError(t.error);
+      await authService.resetPassword(token, { password });
+      toast.success(t.success);
+      setTimeout(() => navigate("/login"), 2000);
+    } catch (err: any) {
+      const serverMessage = err.response?.data?.message;
+      setError(serverMessage || t.errors.token);
     } finally {
       setLoading(false);
     }
@@ -111,22 +139,6 @@ export const LoginPage = () => {
 
           <form onSubmit={handleSubmit} className={styles.form}>
             <div className={styles.inputGroup}>
-              <label htmlFor="username" className={styles.label}>
-                {t.fields.username}
-              </label>
-              <input
-                id="username"
-                type="text"
-                placeholder={t.fields.placeholderUser}
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className={styles.input}
-                required
-                disabled={loading}
-              />
-            </div>
-
-            <div className={styles.inputGroup}>
               <label htmlFor="password" className={styles.label}>
                 {t.fields.password}
               </label>
@@ -142,10 +154,20 @@ export const LoginPage = () => {
               />
             </div>
 
-            <div className={styles.forgotWrapper}>
-              <Link to="/forgot-password" className={styles.forgotLink}>
-                {t.fields.forgot}
-              </Link>
+            <div className={styles.inputGroup}>
+              <label htmlFor="confirmPassword" className={styles.label}>
+                {t.fields.confirm}
+              </label>
+              <input
+                id="confirmPassword"
+                type="password"
+                placeholder={t.fields.placeholderConfirm}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className={styles.input}
+                required
+                disabled={loading}
+              />
             </div>
 
             <button
@@ -164,7 +186,7 @@ export const LoginPage = () => {
           <div className={styles.footer}>
             <p className={styles.footerText}>
               {t.footer.text}{" "}
-              <Link to="/register" className={styles.footerLink}>
+              <Link to="/login" className={styles.footerLink}>
                 {t.footer.link}
               </Link>
             </p>

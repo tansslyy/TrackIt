@@ -2,7 +2,7 @@ import { useState } from "react";
 import { HabitService } from "../../../services/habit.service";
 import { toast } from "react-hot-toast";
 import styles from "./CreateHabitModal.module.css";
-import type { CreateHabitDto } from "../../../types/dtos/habit/create-habit.dto";
+import type { CreateHabitDto } from "../../../api/types/dtos/habit/create-habit.dto";
 
 interface CreateHabitModalProps {
   onClose: () => void;

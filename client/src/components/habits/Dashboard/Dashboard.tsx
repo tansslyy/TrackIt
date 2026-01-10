@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import type { UserHabit } from "../../../types/models/habits/user-habit";
+import type { UserHabit } from "../../../api/types/models/habits/user-habit";
 import styles from "./Dashboard.module.css";
 import { DashboardHeader } from "../DashboardHeader/DashboardHeader";
 import { DashboardStats } from "../DashboardStats/DashboardStats";

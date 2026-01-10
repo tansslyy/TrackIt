@@ -79,7 +79,11 @@ instance.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const response = await instance.post("/auth/refresh");
+        const response = await axios.post(
+          `/auth/refresh`,
+          {},
+          { withCredentials: true }
+        );
         const { accessToken } = response.data;
 
         localStorage.setItem("accessToken", accessToken);
@@ -96,7 +100,13 @@ instance.interceptors.response.use(
         processQueue(refreshError, null);
         localStorage.removeItem("accessToken");
 
-        if (window.location.pathname !== "/login") {
+        const path = window.location.pathname;
+
+        if (
+          path !== "/login" &&
+          path !== "/register" &&
+          !path.includes("/reset-password")
+        ) {
           toast.error("Session expired. Please log in again.");
           window.location.href = "/login";
         }

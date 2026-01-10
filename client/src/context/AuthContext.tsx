@@ -1,8 +1,10 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { authService } from "../services/auth.service";
-import type { RegisterDto } from "../types/dtos/auth/register.dto";
-import type { LoginDto } from "../types/dtos/auth/login.dto";
-import type { User } from "../types/models/user.model";
+import type { RegisterDto } from "../api/types/dtos/auth/register.dto";
+import type { LoginDto } from "../api/types/dtos/auth/login.dto";
+import type { User } from "../api/types/models/user.model";
+import type { UpdatePasswordDto } from "../api/types/dtos/auth/update-password.dto.ts";
+import { data } from "react-router-dom";
 
 interface AuthContextType {
   user: User | null;
@@ -11,6 +13,7 @@ interface AuthContextType {
   login: (data: LoginDto) => Promise<void>;
   register: (data: RegisterDto) => Promise<void>;
   logout: () => void;
+  updatePassword: (data: UpdatePasswordDto) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -41,15 +44,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const login = async (data: LoginDto) => {
-    await authService.login(data);
+    const response = await authService.login(data);
+
+    if (response.accessToken) {
+      localStorage.setItem("accessToken", response.accessToken);
+    }
+
     const userData = await authService.getMe();
     setUser(userData);
   };
 
   const register = async (data: RegisterDto) => {
-    await authService.register(data);
+    const response = await authService.register(data);
+
+    if (response.accessToken) {
+      localStorage.setItem("accessToken", response.accessToken);
+    }
+
     const userData = await authService.getMe();
     setUser(userData);
+  };
+
+  const updatePassword = async (data: UpdatePasswordDto) => {
+    const response = await authService.updatePassword(data);
+
+    if (response.accessToken) {
+      localStorage.setItem("accessToken", response.accessToken);
+    }
   };
 
   const logout = async () => {
@@ -65,7 +86,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuth: !!user, isLoading, login, register, logout }}
+      value={{
+        user,
+        isAuth: !!user,
+        isLoading,
+        login,
+        register,
+        logout,
+        updatePassword,
+      }}
     >
       {children}
     </AuthContext.Provider>
