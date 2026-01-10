@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { HabitService } from "../../services/habit.service";
-import type { UserHabit } from "../../types/models/habits/user-habit";
+import type { UserHabit } from "../../api/types/models/habits/user-habit";
 import styles from "./DashboardPage.module.css";
 import toast from "react-hot-toast";
 import { Dashboard } from "../../components/habits/Dashboard/Dashboard";

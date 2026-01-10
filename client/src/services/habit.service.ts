@@ -1,6 +1,6 @@
 import instance from "../api/axios";
-import type { CreateHabitDto } from "../types/dtos/habit/create-habit.dto";
-import type { UserHabit } from "../types/models/habits/user-habit";
+import type { CreateHabitDto } from "../api/types/dtos/habit/create-habit.dto";
+import type { UserHabit } from "../api/types/models/habits/user-habit";
 
 export const HabitService = {
   async getTodayHabits(): Promise<UserHabit[]> {

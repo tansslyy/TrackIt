@@ -1,5 +1,5 @@
 import type React from "react";
-import type { UserHabit } from "../../../types/models/habits/user-habit";
+import type { UserHabit } from "../../../api/types/models/habits/user-habit";
 import styles from "./HabitCard.module.css";
 
 interface HabitCardProps {
