@@ -79,8 +79,8 @@ instance.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const response = await instance.post(
-          `${import.meta.env.VITE_API_URL}/auth/refresh`,
+        const response = await axios.post(
+          `/auth/refresh`,
           {},
           { withCredentials: true }
         );

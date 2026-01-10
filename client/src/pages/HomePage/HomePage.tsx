@@ -122,7 +122,7 @@ const HomePage = () => {
                 >
                   {t.nav.logout}
                 </button>
-                <Link to="/habits" className={styles.registerBtn}>
+                <Link to="/dashboard" className={styles.registerBtn}>
                   {t.nav.cabinet}
                 </Link>
               </div>
