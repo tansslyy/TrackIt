@@ -348,19 +348,16 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-
-/* Додай це до існуючих стилів */
-
 .forgotWrapper {
   display: flex;
-  justify-content: flex-end; /* Вирівнюємо посилання праворуч */
+  justify-content: flex-end;
   width: 100%;
-  margin-top: -0.5rem;      /* Трохи підтягуємо до поля паролю */
-  margin-bottom: 1.5rem;    /* Відступ від кнопки входу */
+  margin-top: -0.5rem;      
+  margin-bottom: 1.5rem;    
 }
 
 .forgotLink {
-  color: #6366f1; /* Твій акцентний колір (indigo) */
+  color: #6366f1; 
   font-size: 0.875rem;
   text-decoration: none;
   font-weight: 500;

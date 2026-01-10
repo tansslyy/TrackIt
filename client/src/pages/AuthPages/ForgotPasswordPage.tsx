@@ -58,9 +58,7 @@ export const ForgotPasswordPage = () => {
     } finally {
       setLoading(false);
     }
-  }; // <--- ТУТ закінчується функція handleSubmit
-
-  // <--- А ТУТ починається return самого компонента (він має бути ззовні)
+  };
   return (
     <div className={styles.page}>
       <div className={styles.langWrapper}>

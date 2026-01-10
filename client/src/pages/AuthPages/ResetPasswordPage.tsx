@@ -92,9 +92,8 @@ export const ResetPasswordPage = () => {
     } finally {
       setLoading(false);
     }
-  }; // <--- Закриваємо handleSubmit
+  };
 
-  // <--- Відкриваємо return компонента
   return (
     <div className={styles.page}>
       <div className={styles.langWrapper}>
