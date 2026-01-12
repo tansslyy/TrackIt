@@ -76,6 +76,7 @@ export class HabitsService {
   async toggleCompletion(userId: string, habitId: string) {
     const userHabit = await this.prisma.userHabit.findUnique({
       where: { id: habitId },
+      include: { habit: true },
     });
 
     if (!userHabit || userHabit.userId !== userId) {

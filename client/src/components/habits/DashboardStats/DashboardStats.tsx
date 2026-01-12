@@ -31,7 +31,6 @@ export const DashboardStats = ({ completed, total }: DashboardStatsProps) => {
       </div>
 
       <div className={styles.statsGrid}>
-        {/* Картка: Виконано */}
         <div className={styles.statCard}>
           <div className={`${styles.statIconWrapper} ${styles.iconSuccess}`}>
             <svg

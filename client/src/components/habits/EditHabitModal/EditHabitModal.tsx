@@ -1,14 +1,10 @@
-import { useState } from "react";
-import { HabitService } from "../../../services/habit.service";
-import { toast } from "react-hot-toast";
-import styles from "./CreateHabitModal.module.css";
-import type { CreateHabitDto } from "../../../api/types/dtos/habits/create-habit.dto";
+import React, { useState } from "react";
 import { DayOfWeek, RepeatTime } from "../../../api/types/enums";
-
-interface CreateHabitModalProps {
-  onClose: () => void;
-  onSuccess: () => void;
-}
+import type { UserHabit } from "../../../api/types/models/user-habit.model";
+import toast from "react-hot-toast";
+import type { UpdateHabitDto } from "../../../api/types/dtos/habits/update-habit.dto";
+import { HabitService } from "../../../services/habit.service";
+import styles from "./EditHabitModal.module.css";
 
 const COLORS = [
   "#4f46e5",
@@ -20,7 +16,6 @@ const COLORS = [
   "#ec4899",
   "#6b7280",
 ];
-
 const ICONS = [
   "📝",
   "🏃‍♂️",
@@ -35,7 +30,6 @@ const ICONS = [
   "💻",
   "🧹",
 ];
-
 const DAYS_OF_WEEK_OPTIONS = [
   { label: "Пн", value: DayOfWeek.MONDAY },
   { label: "Вт", value: DayOfWeek.TUESDAY },
@@ -46,16 +40,25 @@ const DAYS_OF_WEEK_OPTIONS = [
   { label: "Нд", value: DayOfWeek.SUNDAY },
 ];
 
-export const CreateHabitModal = ({
+interface EditHabitModalProps {
+  habit: UserHabit;
+  onClose: () => void;
+  onSuccess: () => void;
+}
+
+export const EditHabitModal = ({
+  habit,
   onClose,
   onSuccess,
-}: CreateHabitModalProps) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [color, setColor] = useState(COLORS[0]);
-  const [icon, setIcon] = useState(ICONS[0]);
-  const [repeatType, setRepeatType] = useState<RepeatTime>(RepeatTime.DAILY);
-  const [selectedDays, setSelectedDays] = useState<DayOfWeek[]>([]);
+}: EditHabitModalProps) => {
+  const [name, setName] = useState(habit.title);
+  const [description, setDescription] = useState(habit.description || "");
+  const [color, setColor] = useState(habit.color || COLORS[0]);
+  const [icon, setIcon] = useState(habit.icon || ICONS[0]);
+  const [repeatType, setRepeatType] = useState<RepeatTime>(habit.repeatType);
+  const [selectedDays, setSelectedDays] = useState<DayOfWeek[]>(
+    habit.days || []
+  );
   const [isLoading, setIsLoading] = useState(false);
 
   const toggleDay = (dayValue: DayOfWeek) => {
@@ -70,7 +73,7 @@ export const CreateHabitModal = ({
     e.preventDefault();
 
     if (!name.trim()) {
-      toast.error("Введіть назву звички");
+      toast.error("Назва не може бути порожньою");
       return;
     }
 
@@ -81,22 +84,21 @@ export const CreateHabitModal = ({
 
     try {
       setIsLoading(true);
-
-      const dto: CreateHabitDto = {
+      const dto: UpdateHabitDto = {
         name,
         description,
         repeatType,
         days: repeatType === RepeatTime.CUSTOM ? selectedDays : [],
       };
 
-      await HabitService.create(dto);
+      await HabitService.update(habit.id, dto);
 
-      toast.success("Звичку створено успішно! 🎉");
+      toast.success("Зміни збережено!");
       onSuccess();
       onClose();
     } catch (error) {
       console.error(error);
-      toast.error("Помилка при створенні");
+      toast.error("Не вдалося оновити звичку");
     } finally {
       setIsLoading(false);
     }
@@ -111,9 +113,8 @@ export const CreateHabitModal = ({
   return (
     <div className={styles.overlay} onClick={handleBackdropClick}>
       <div className={styles.modal}>
-        {/* --- ХЕДЕР (Зафіксований) --- */}
         <div className={styles.header}>
-          <h2 className={styles.title}>Нова звичка</h2>
+          <h2 className={styles.title}>Редагування звички</h2>
           <div
             className={styles.previewBadge}
             style={{ backgroundColor: color }}
@@ -122,36 +123,28 @@ export const CreateHabitModal = ({
           </div>
         </div>
 
-        {/* --- ФОРМА (Flex-контейнер на всю висоту) --- */}
         <form onSubmit={handleSubmit} className={styles.formLayout}>
-          {/* --- СКРОЛ-ЗОНА (Контент) --- */}
           <div className={styles.scrollableContent}>
-            {/* Назва */}
             <div className={styles.formGroup}>
               <label className={styles.label}>Назва</label>
               <input
                 type="text"
                 className={styles.input}
-                placeholder="Напр., Читати 15 хвилин"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                autoFocus
               />
             </div>
 
-            {/* Опис */}
             <div className={styles.formGroup}>
-              <label className={styles.label}>Опис (необов'язково)</label>
+              <label className={styles.label}>Опис</label>
               <textarea
                 className={styles.textarea}
-                placeholder="Деталі вашої цілі..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={2}
               />
             </div>
 
-            {/* Колір та Іконка (2 колонки) */}
             <div className={styles.row}>
               <div className={styles.formGroup}>
                 <label className={styles.label}>Колір</label>
@@ -189,7 +182,6 @@ export const CreateHabitModal = ({
               </div>
             </div>
 
-            {/* Частота */}
             <div className={styles.formGroup}>
               <label className={styles.label}>Частота</label>
               <div className={styles.typeSelector}>
@@ -232,7 +224,7 @@ export const CreateHabitModal = ({
             </div>
           </div>
 
-          {/* --- ФУТЕР (Кнопки знизу) --- */}
+          {/* ФУТЕР */}
           <div className={styles.footer}>
             <button
               type="button"
@@ -247,7 +239,7 @@ export const CreateHabitModal = ({
               className={styles.submitBtn}
               disabled={isLoading}
             >
-              {isLoading ? "Збереження..." : "Створити"}
+              {isLoading ? "Збереження..." : "Зберегти"}
             </button>
           </div>
         </form>

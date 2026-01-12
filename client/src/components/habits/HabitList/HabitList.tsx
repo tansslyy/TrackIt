@@ -1,4 +1,4 @@
-import type { UserHabit } from "../../../api/types/models/habits/user-habit";
+import type { UserHabit } from "../../../api/types/models/user-habit.model";
 import { EmptyState } from "../../../ui/EmptyState/EmptyState";
 import { LoadingSpinner } from "../../../ui/LoadingSpinner/LoadingSpinner";
 import { HabitCard } from "../HabitCard/HabitCard";
@@ -9,6 +9,7 @@ interface HabitListProps {
   loading: boolean;
   onToggleComplete: (habitId: string) => void;
   onDelete: (habitId: string) => void;
+  onEdit: (habit: UserHabit) => void;
 }
 
 export const HabitList = ({
@@ -16,6 +17,7 @@ export const HabitList = ({
   loading,
   onToggleComplete,
   onDelete,
+  onEdit,
 }: HabitListProps) => {
   if (loading) {
     return <LoadingSpinner />;
@@ -42,6 +44,7 @@ export const HabitList = ({
             habit={habit}
             onToggle={() => onToggleComplete(habit.id)}
             onDelete={() => onDelete(habit.id)}
+            onEdit={() => onEdit(habit)}
           />
         ))}
       </div>
