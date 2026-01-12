@@ -1,4 +1,7 @@
-import type { DayOfWeek, HabitStatus, RepeatTime } from "../../enums";
+import type { RepeatTime } from "../../enums";
+import type { HabitDetailsDto } from "./habit-details.dto";
+import type { HabitLogDto } from "./habit-log.dto";
+import type { HabitDayDto } from "./habitDay.dto";
 
 export interface HabitResponseDto {
   id: string;
@@ -9,21 +12,7 @@ export interface HabitResponseDto {
   startDate?: string;
   endDate?: string;
 
-  habit: {
-    id: string;
-    name: string;
-    description: string | null;
-    isDefault: boolean;
-    categoryId: string | null;
-  };
-
-  logs?: Array<{
-    id: string;
-    date: string;
-    status: HabitStatus;
-  }>;
-
-  days: Array<{
-    dayOfWeek: DayOfWeek;
-  }>;
+  habit: HabitDetailsDto;
+  logs?: HabitLogDto[];
+  days: HabitDayDto[];
 }
