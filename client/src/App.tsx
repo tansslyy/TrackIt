@@ -6,6 +6,7 @@ import HomePage from "./pages/HomePage/HomePage";
 import PrivateRoute from "./routes/PrivateRoute";
 import { ForgotPasswordPage } from "./pages/AuthPages/ForgotPasswordPage";
 import { ResetPasswordPage } from "./pages/AuthPages/ResetPasswordPage";
+import { HabitsPage } from "./pages/HabitsPage/HabitsPage";
 
 function App() {
   return (
@@ -17,7 +18,7 @@ function App() {
       <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
       <Route element={<PrivateRoute />}>
-        {/* <Route path="/habits" element={<HabitsPage />} /> */}
+        <Route path="/habits" element={<HabitsPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         {/* <Route path="/profile" element={<ProfilePage />} /> */}
       </Route>
