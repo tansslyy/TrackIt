@@ -255,7 +255,7 @@
   font-size: 2.5rem;
   font-weight: 800;
   background: linear-gradient(135deg, #a78bfa 0%, #ec4899 100%);
-  -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 0.3rem;
 }
@@ -340,7 +340,7 @@
   line-height: 1.05;
   letter-spacing: -2px;
   background: linear-gradient(180deg, #FFFFFF 20%, rgba(255, 255, 255, 0.6) 100%);
-  -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   filter: drop-shadow(0 0 30px rgba(255,255,255,0.1));
 }
@@ -511,7 +511,7 @@
   font-weight: 800;
   margin-bottom: 3rem;
   background: linear-gradient(180deg, #FFFFFF 20%, rgba(255, 255, 255, 0.7) 100%);
-  -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 

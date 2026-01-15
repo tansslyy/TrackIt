@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { HabitService } from "../../../services/habit.service";
 import { toast } from "react-hot-toast";
 import styles from "./CreateHabitModal.module.css";
 import type { CreateHabitDto } from "../../../api/types/dtos/habits/create-habit.dto";
 import { DayOfWeek, RepeatTime } from "../../../api/types/enums";
+import type { LibraryCategoryDto } from "../../../api/types/dtos/habits/library-category.dto";
+import type { LibraryItemDto } from "../../../api/types/dtos/habits/library-response.dto";
 
 interface CreateHabitModalProps {
   onClose: () => void;
@@ -57,6 +59,8 @@ export const CreateHabitModal = ({
   const [repeatType, setRepeatType] = useState<RepeatTime>(RepeatTime.DAILY);
   const [selectedDays, setSelectedDays] = useState<DayOfWeek[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [library, setLibrary] = useState<LibraryCategoryDto[]>([]);
+  const [habitId, setHabitId] = useState<string | null>(null);
 
   const toggleDay = (dayValue: DayOfWeek) => {
     setSelectedDays((prev) =>
@@ -87,6 +91,7 @@ export const CreateHabitModal = ({
         description,
         repeatType,
         days: repeatType === RepeatTime.CUSTOM ? selectedDays : [],
+        habitId: habitId || undefined,
       };
 
       await HabitService.create(dto);
@@ -108,10 +113,24 @@ export const CreateHabitModal = ({
     }
   };
 
+  useEffect(() => {
+    HabitService.getLibrary().then(setLibrary).catch(console.error);
+  }, []);
+
+  const handleSelectTemplate = (habit: LibraryItemDto) => {
+    setName(habit.name);
+    setDescription(habit.description || "");
+    setHabitId(habit.id);
+  };
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+    setHabitId(null);
+  };
+
   return (
     <div className={styles.overlay} onClick={handleBackdropClick}>
       <div className={styles.modal}>
-        {/* --- ХЕДЕР (Зафіксований) --- */}
         <div className={styles.header}>
           <h2 className={styles.title}>Нова звичка</h2>
           <div
@@ -122,11 +141,30 @@ export const CreateHabitModal = ({
           </div>
         </div>
 
-        {/* --- ФОРМА (Flex-контейнер на всю висоту) --- */}
         <form onSubmit={handleSubmit} className={styles.formLayout}>
-          {/* --- СКРОЛ-ЗОНА (Контент) --- */}
           <div className={styles.scrollableContent}>
-            {/* Назва */}
+            {library.length > 0 && (
+              <div className={styles.librarySection}>
+                <p className={styles.libraryLabel}>Швидкий старт:</p>
+                <div className={styles.chipsContainer}>
+                  {library
+                    .flatMap((cat) => cat.habit)
+                    .map((habit) => (
+                      <button
+                        key={habit.id}
+                        type="button"
+                        onClick={() => handleSelectTemplate(habit)}
+                        className={`${styles.chip} ${
+                          habitId === habit.id ? styles.activeChip : ""
+                        }`}
+                      >
+                        {habit.name}
+                      </button>
+                    ))}
+                </div>
+              </div>
+            )}
+
             <div className={styles.formGroup}>
               <label className={styles.label}>Назва</label>
               <input
@@ -134,12 +172,11 @@ export const CreateHabitModal = ({
                 className={styles.input}
                 placeholder="Напр., Читати 15 хвилин"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={handleNameChange}
                 autoFocus
               />
             </div>
 
-            {/* Опис */}
             <div className={styles.formGroup}>
               <label className={styles.label}>Опис (необов'язково)</label>
               <textarea
@@ -151,7 +188,6 @@ export const CreateHabitModal = ({
               />
             </div>
 
-            {/* Колір та Іконка (2 колонки) */}
             <div className={styles.row}>
               <div className={styles.formGroup}>
                 <label className={styles.label}>Колір</label>
@@ -189,7 +225,6 @@ export const CreateHabitModal = ({
               </div>
             </div>
 
-            {/* Частота */}
             <div className={styles.formGroup}>
               <label className={styles.label}>Частота</label>
               <div className={styles.typeSelector}>
@@ -232,7 +267,6 @@ export const CreateHabitModal = ({
             </div>
           </div>
 
-          {/* --- ФУТЕР (Кнопки знизу) --- */}
           <div className={styles.footer}>
             <button
               type="button"

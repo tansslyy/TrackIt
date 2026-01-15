@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateHabitDto } from './dto/create-habit.dto';
 import { UpdateHabitDto } from './dto/update-habit.dto';
 import { PrismaService } from 'src/database/prisma.service';
@@ -180,8 +184,21 @@ export class HabitsService {
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} habit`;
+  async findOne(id: string) {
+    const habit = await this.prisma.userHabit.findUnique({
+      where: { id },
+      include: {
+        habit: true,
+        days: true,
+        logs: true,
+      },
+    });
+
+    if (!habit) {
+      throw new NotFoundException('Habit with ID ${id} not found');
+    }
+
+    return habit;
   }
 
   async update(userId: string, habitId: string, dto: UpdateHabitDto) {

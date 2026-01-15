@@ -85,7 +85,7 @@
   letter-spacing: -1.5px;
   margin: 0 0 0.5rem 0;
   background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
-  -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   filter: drop-shadow(0 2px 15px rgba(167, 139, 250, 0.3));
 }
@@ -170,7 +170,7 @@
   font-size: 2rem;
   font-weight: 800;
   background: linear-gradient(135deg, #a78bfa 0%, #ec4899 100%);
-  -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   line-height: 1;
   margin-bottom: 0.3rem;
