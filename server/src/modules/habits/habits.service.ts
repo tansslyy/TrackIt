@@ -11,6 +11,12 @@ import { GetMonthQueryDto } from './dto/get-month-query.dto';
 import { HabitRepository } from 'src/database/repositories/habit.repository';
 import { HabitLogRepository } from 'src/database/repositories/habit-log.repository';
 import { UserHabitRepository } from 'src/database/repositories/user-habit.repository';
+import {
+  getDayName,
+  getEndOfMonth,
+  getStartOfDay,
+  getStartOfMonth,
+} from 'src/common/utils/date.utils';
 
 @Injectable()
 export class HabitsService {
@@ -30,7 +36,7 @@ export class HabitsService {
       throw new BadRequestException('Habit name is required');
     }
 
-    let habit = await this.habitRepo.findCustomByName(dto.name);
+    let habit = await this.habitRepo.findByName(dto.name);
 
     if (!habit) {
       habit = await this.habitRepo.create({
@@ -40,15 +46,17 @@ export class HabitsService {
       });
     }
 
-    return this.userHabitRepo.create({
+    const userHabitData = {
       userId: userId,
       habitId: habit.id,
       repeatType: dto.repeatType || 'DAILY',
       startDate: new Date(),
       days: dto.days?.length
-        ? { create: dto.days.map((day) => ({ DayOfWeek: day })) }
+        ? { create: dto.days.map((day) => ({ dayOfWeek: day })) }
         : undefined,
-    });
+    };
+
+    return this.userHabitRepo.create(userHabitData);
   }
 
   async linkHabitToUser(userId: string, dto: CreateHabitDto) {
@@ -56,7 +64,7 @@ export class HabitsService {
       throw new BadRequestException('HabitId is required for binding');
     }
 
-    return this.userHabitRepo.create({
+    const userHabitData = {
       userId: userId,
       habitId: dto.habitId,
       repeatType: dto.repeatType,
@@ -64,7 +72,8 @@ export class HabitsService {
       days: dto.days?.length
         ? { create: dto.days.map((day) => ({ DayOfWeek: day })) }
         : undefined,
-    });
+    };
+    return this.userHabitRepo.create(userHabitData);
   }
 
   async toggleCompletion(userId: string, habitId: string) {
@@ -97,28 +106,16 @@ export class HabitsService {
   }
 
   async findDaily(userId: string, query: GetMonthQueryDto) {
-    const targetDate = query.date ? new Date(query.date) : new Date();
-    targetDate.setHours(0, 0, 0, 0);
+    const targetDate = getStartOfDay(query.date || new Date());
 
-    const days = [
-      'SUNDAY',
-      'MONDAY',
-      'TUESDAY',
-      'WEDNESDAY',
-      'THURSDAY',
-      'FRIDAY',
-      'SATURDAY',
-    ];
-    const dayOfWeek = days[targetDate.getDate()];
+    const dayOfWeek = getDayName(targetDate);
 
     return this.userHabitRepo.findDaily(userId, targetDate, dayOfWeek);
   }
 
   async findMonth(userId: string, query: GetMonthQueryDto) {
-    const [year, month] = query.date.split('-').map(Number);
-    const startOfMonth = new Date(year, month - 1, 1);
-    const endOfMonth = new Date(year, month, 0);
-    endOfMonth.setHours(23, 59, 59, 999);
+    const startOfMonth = getStartOfMonth(query.date);
+    const endOfMonth = getEndOfMonth(query.date);
 
     return this.userHabitRepo.findForMonth(userId, startOfMonth, endOfMonth);
   }
