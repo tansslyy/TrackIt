@@ -8,7 +8,9 @@ export class HabitRepository extends BaseRepository<any> {
     super(prisma.habit);
   }
 
-  async findByName(name: string) {
-    return this.delegate.findUnique({ where: { name } });
+  async findCustomByName(name: string) {
+    return this.delegate.findFirst({
+      where: { name, isDefault: false },
+    });
   }
 }

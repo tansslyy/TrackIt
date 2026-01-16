@@ -7,10 +7,19 @@ import { CreateHabitDto } from './dto/create-habit.dto';
 import { UpdateHabitDto } from './dto/update-habit.dto';
 import { PrismaService } from 'src/database/prisma.service';
 import { DayOfWeek } from '@prisma/client';
+import { GetMonthQueryDto } from './dto/get-month-query.dto';
+import { HabitRepository } from 'src/database/repositories/habit.repository';
+import { HabitLogRepository } from 'src/database/repositories/habit-log.repository';
+import { UserHabitRepository } from 'src/database/repositories/user-habit.repository';
 
 @Injectable()
 export class HabitsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly userHabitRepo: UserHabitRepository,
+    private readonly habitRepo: HabitRepository,
+    private readonly habitLogRepo: HabitLogRepository,
+  ) {}
 
   async createOrLinkHabit(userId: string, dto: CreateHabitDto) {
     if (dto.habitId) {
@@ -21,37 +30,24 @@ export class HabitsService {
       throw new BadRequestException('Habit name is required');
     }
 
-    let habit = await this.prisma.habit.findFirst({
-      where: {
-        name: dto.name,
-        isDefault: false,
-      },
-    });
+    let habit = await this.habitRepo.findCustomByName(dto.name);
 
     if (!habit) {
-      habit = await this.prisma.habit.create({
-        data: {
-          name: dto.name,
-          description: dto.description,
-          isDefault: false,
-        },
+      habit = await this.habitRepo.create({
+        name: dto.name,
+        description: dto.description,
+        isDefault: false,
       });
     }
 
-    return this.prisma.userHabit.create({
-      data: {
-        userId: userId,
-        habitId: habit.id,
-        repeatType: dto.repeatType || 'DAILY',
-        startDate: new Date(),
-        days: dto.days?.length
-          ? { create: dto.days.map((day) => ({ dayOfWeek: day })) }
-          : undefined,
-      },
-      include: {
-        habit: true,
-        days: true,
-      },
+    return this.userHabitRepo.create({
+      userId: userId,
+      habitId: habit.id,
+      repeatType: dto.repeatType || 'DAILY',
+      startDate: new Date(),
+      days: dto.days?.length
+        ? { create: dto.days.map((day) => ({ DayOfWeek: day })) }
+        : undefined,
     });
   }
 
@@ -60,28 +56,19 @@ export class HabitsService {
       throw new BadRequestException('HabitId is required for binding');
     }
 
-    return this.prisma.userHabit.create({
-      data: {
-        userId: userId,
-        habitId: dto.habitId,
-        repeatType: dto.repeatType,
-        startDate: new Date(),
-        days: dto.days?.length
-          ? { create: dto.days.map((day) => ({ dayOfWeek: day })) }
-          : undefined,
-      },
-      include: {
-        habit: true,
-        days: true,
-      },
+    return this.userHabitRepo.create({
+      userId: userId,
+      habitId: dto.habitId,
+      repeatType: dto.repeatType,
+      startDate: new Date(),
+      days: dto.days?.length
+        ? { create: dto.days.map((day) => ({ DayOfWeek: day })) }
+        : undefined,
     });
   }
 
   async toggleCompletion(userId: string, habitId: string) {
-    const userHabit = await this.prisma.userHabit.findUnique({
-      where: { id: habitId },
-      include: { habit: true },
-    });
+    const userHabit = await this.userHabitRepo.findByIdWithRelations(habitId);
 
     if (!userHabit || userHabit.userId !== userId) {
       throw new BadRequestException('Habit not found or access denied');
@@ -90,46 +77,50 @@ export class HabitsService {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const existingLog = await this.prisma.habitLog.findFirst({
-      where: {
-        userHabitId: habitId,
-        date: today,
-      },
-    });
+    const existingLog = await this.habitLogRepo.findBydate(habitId, today);
 
     if (existingLog) {
-      await this.prisma.habitLog.delete({
-        where: { id: existingLog.id },
-      });
+      await this.habitLogRepo.delete(existingLog.id);
       return { status: 'UNCOMPLETED', message: 'Execution canceled' };
     } else {
-      await this.prisma.habitLog.create({
-        data: {
-          userHabitId: habitId,
-          date: today,
-          status: 'COMPLETED',
-          createdAt: new Date(),
-        },
+      await this.habitLogRepo.create({
+        userHabitId: habitId,
+        date: today,
+        status: 'COMPLETED',
       });
       return { status: 'COMPLETED', message: 'Habit completed!' };
     }
   }
 
   async findAll(userId: string) {
-    return this.prisma.userHabit.findMany({
-      where: { userId, deletedAt: null, habit: { deletedAt: null } },
-      include: {
-        habit: true,
-        days: true,
-        logs: {
-          where: {
-            date: {
-              gte: new Date(new Date().setHours(0, 0, 0, 0)),
-            },
-          },
-        },
-      },
-    });
+    return this.userHabitRepo.findAllActive(userId);
+  }
+
+  async findDaily(userId: string, query: GetMonthQueryDto) {
+    const targetDate = query.date ? new Date(query.date) : new Date();
+    targetDate.setHours(0, 0, 0, 0);
+
+    const days = [
+      'SUNDAY',
+      'MONDAY',
+      'TUESDAY',
+      'WEDNESDAY',
+      'THURSDAY',
+      'FRIDAY',
+      'SATURDAY',
+    ];
+    const dayOfWeek = days[targetDate.getDate()];
+
+    return this.userHabitRepo.findDaily(userId, targetDate, dayOfWeek);
+  }
+
+  async findMonth(userId: string, query: GetMonthQueryDto) {
+    const [year, month] = query.date.split('-').map(Number);
+    const startOfMonth = new Date(year, month - 1, 1);
+    const endOfMonth = new Date(year, month, 0);
+    endOfMonth.setHours(23, 59, 59, 999);
+
+    return this.userHabitRepo.findForMonth(userId, startOfMonth, endOfMonth);
   }
 
   async findLibrary() {
@@ -185,27 +176,15 @@ export class HabitsService {
   }
 
   async findOne(id: string) {
-    const habit = await this.prisma.userHabit.findUnique({
-      where: { id },
-      include: {
-        habit: true,
-        days: true,
-        logs: true,
-      },
-    });
-
+    const habit = await this.userHabitRepo.findByIdWithRelations(id);
     if (!habit) {
-      throw new NotFoundException('Habit with ID ${id} not found');
+      throw new NotFoundException(`Habit with ID ${id} not found`);
     }
-
     return habit;
   }
 
   async update(userId: string, habitId: string, dto: UpdateHabitDto) {
-    const userHabit = await this.prisma.userHabit.findUnique({
-      where: { id: habitId },
-      include: { habit: true },
-    });
+    const userHabit = await this.userHabitRepo.findByIdWithRelations(habitId);
 
     if (!userHabit || userHabit.userId !== userId) {
       throw new BadRequestException('Access denied');
@@ -243,9 +222,7 @@ export class HabitsService {
   }
 
   async remove(userId: string, habitId: string) {
-    const userHabit = await this.prisma.userHabit.findUnique({
-      where: { id: habitId },
-    });
+    const userHabit = await this.userHabitRepo.findById(habitId);
 
     if (!userHabit || userHabit.deletedAt) {
       throw new BadRequestException('No habit found with this ID');
@@ -255,11 +232,8 @@ export class HabitsService {
       throw new BadRequestException('You do not have access to this habit');
     }
 
-    return this.prisma.userHabit.update({
-      where: { id: habitId },
-      data: {
-        deletedAt: new Date(),
-      },
+    return this.userHabitRepo.update(habitId, {
+      deletedAt: new Date(),
     });
   }
 }
