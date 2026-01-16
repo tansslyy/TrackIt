@@ -49,7 +49,7 @@ export class UserHabitRepository extends BaseRepository<any> {
     });
   }
 
-  async findForMonth(userId: string, start: Date, end: Date) {
+  async findByPeriod(userId: string, start: Date, end: Date) {
     return this.delegate.findMany({
       where: {
         userId: userId,

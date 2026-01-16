@@ -117,7 +117,7 @@ export class HabitsService {
     const startOfMonth = getStartOfMonth(query.date);
     const endOfMonth = getEndOfMonth(query.date);
 
-    return this.userHabitRepo.findForMonth(userId, startOfMonth, endOfMonth);
+    return this.userHabitRepo.findByPeriod(userId, startOfMonth, endOfMonth);
   }
 
   async findLibrary() {
