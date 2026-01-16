@@ -11,4 +11,10 @@ export class HabitLogRepository extends BaseRepository<any> {
   async findByUserHabit(userHabitId: string) {
     return this.delegate.findMany({ where: { userHabitId } });
   }
+
+  async findBydate(userHabitId: string, date: Date) {
+    return this.delegate.findFirst({
+      where: { userHabitId, date },
+    });
+  }
 }

@@ -9,6 +9,8 @@ export class HabitRepository extends BaseRepository<any> {
   }
 
   async findByName(name: string) {
-    return this.delegate.findUnique({ where: { name } });
+    return this.delegate.findFirst({
+      where: { name },
+    });
   }
 }

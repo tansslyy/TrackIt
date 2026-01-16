@@ -9,12 +9,14 @@ import {
   UseGuards,
   Req,
   Request,
+  Query,
 } from '@nestjs/common';
 import { HabitsService } from './habits.service';
 import { CreateHabitDto } from './dto/create-habit.dto';
 import { UpdateHabitDto } from './dto/update-habit.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { request } from 'http';
+import { LibraryCategoryDto } from './dto/library-category.dto';
+import { GetMonthQueryDto } from './dto/get-month-query.dto';
 
 interface RequestWithUser extends Request {
   user: { id: string };
@@ -31,8 +33,18 @@ export class HabitsController {
   }
 
   @Get('library')
-  findLibrary() {
+  findLibrary(): Promise<LibraryCategoryDto[]> {
     return this.habitsService.findLibrary();
+  }
+
+  @Get('calendar')
+  findMonth(@Req() req: RequestWithUser, @Query() query: GetMonthQueryDto) {
+    return this.habitsService.findMonth(req.user.id, query);
+  }
+
+  @Get('daily')
+  findDaily(@Req() req: RequestWithUser, @Query() query: GetMonthQueryDto) {
+    return this.habitsService.findDaily(req.user.id, query);
   }
 
   @Patch(':id/toggle')
