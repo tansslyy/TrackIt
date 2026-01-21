@@ -1,7 +1,12 @@
 import instance from "../api/axios";
+import type {
+  GetCalendarQueryDto,
+  GetDailyQueryDto,
+} from "../api/types/dtos/habits/calendar/get-calendar.dto";
 import type { CreateHabitDto } from "../api/types/dtos/habits/create-habit.dto";
 import type { HabitResponseDto } from "../api/types/dtos/habits/habit-response.dto";
 import type { LibraryCategoryDto } from "../api/types/dtos/habits/library-category.dto";
+import type { LibraryCategoryModel } from "../api/types/models/library-category.model";
 import type { UserHabit } from "../api/types/models/user-habit.model";
 import { HabitMapper } from "../utils/mappers/habit.mapper";
 
@@ -36,11 +41,33 @@ export const HabitService = {
     return HabitMapper.toDomain(data);
   },
 
-  async getLibrary(): Promise<LibraryCategoryDto[]> {
+  async getLibrary(): Promise<LibraryCategoryModel[]> {
     const { data } = await instance.get<LibraryCategoryDto[]>(
       "/habits/library"
     );
-    return data;
+
+    return data.map((category) => ({
+      id: category.id,
+      name: category.name,
+      habits: category.habit.map((h) => HabitMapper.toLibraryDomain(h)),
+    }));
+  },
+
+  async getCalendar(params: GetCalendarQueryDto): Promise<UserHabit[]> {
+    const { data } = await instance.get<HabitResponseDto[]>(
+      "/habits/calendar",
+      {
+        params,
+      }
+    );
+    return data.map((dto) => HabitMapper.toDomain(dto));
+  },
+
+  async getDaily(params: GetDailyQueryDto): Promise<UserHabit[]> {
+    const { data } = await instance.get<HabitResponseDto[]>("/habits/daily", {
+      params,
+    });
+    return data.map((dto) => HabitMapper.toDomain(dto));
   },
 
   async delete(id: string): Promise<void> {

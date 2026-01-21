@@ -6,6 +6,4 @@ export interface CreateHabitDto {
   description?: string;
   repeatType: RepeatTime;
   days?: DayOfWeek[];
-  color?: string;
-  icon?: string;
 }

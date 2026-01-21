@@ -1,7 +1,15 @@
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  --primary: #3b82f6;       
+  --primary-soft: #eff6ff; 
+  --success: #10b981;       
+  --text-main: #111827;     
+  --text-muted: #9ca3af;   
+  --bg-glass: rgba(255, 255, 255, 0.7);
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.04);
+  --shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.08);
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 8px;
 }
 
 * {
