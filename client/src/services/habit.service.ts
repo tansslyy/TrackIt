@@ -46,11 +46,7 @@ export const HabitService = {
       "/habits/library"
     );
 
-    return data.map((category) => ({
-      id: category.id,
-      name: category.name,
-      habits: category.habit.map((h) => HabitMapper.toLibraryDomain(h)),
-    }));
+    return data.map(HabitMapper.toLibraryCategory);
   },
 
   async getCalendar(params: GetCalendarQueryDto): Promise<UserHabit[]> {

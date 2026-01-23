@@ -50,14 +50,7 @@ export const CalendarPage = () => {
 
   return (
     <MainLayout>
-      <div
-        style={{
-          height: "100%",
-          display: "flex",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
+      <div className={styles.pageWrapper}>
         <div className={styles.mainContent}>
           <div className={styles.headerWrapper}>
             <CalendarHeader

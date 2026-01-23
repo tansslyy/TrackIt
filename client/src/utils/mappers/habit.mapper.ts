@@ -1,6 +1,8 @@
 import type { HabitResponseDto } from "../../api/types/dtos/habits/habit-response.dto";
+import type { LibraryCategoryDto } from "../../api/types/dtos/habits/library-category.dto";
 import { HabitStatus } from "../../api/types/enums";
 import type { HabitMetaFragment } from "../../api/types/fragments/fragments";
+import type { LibraryCategoryModel } from "../../api/types/models/library-category.model";
 import type { LibraryHabit } from "../../api/types/models/library-habit.model";
 import type { UserHabit } from "../../api/types/models/user-habit.model";
 import { format, parseISO } from "date-fns";
@@ -52,6 +54,14 @@ export class HabitMapper {
       description: fragment.description || "",
       isDefault: fragment.isDefault,
       categoryId: fragment.categoryId || "",
+    };
+  }
+
+  static toLibraryCategory(dto: LibraryCategoryDto): LibraryCategoryModel {
+    return {
+      id: dto.id,
+      name: dto.name,
+      habits: dto.habit.map((h) => HabitMapper.toLibraryDomain(h)),
     };
   }
 

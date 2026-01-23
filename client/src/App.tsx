@@ -12,13 +12,11 @@ import { CalendarPage } from "./pages/CalendarPage/CalendarPage";
 function App() {
   return (
     <Routes>
-      {/* Публічні маршрути */}
-      <Route path="/" element={<HomePage />} /> {/* 👈 Тепер це головна */}
+      <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-      {/* Приватні маршрути (всередині програми) */}
       <Route element={<PrivateRoute />}>
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/calendar" element={<CalendarPage />} />

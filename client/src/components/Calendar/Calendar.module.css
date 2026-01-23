@@ -184,3 +184,10 @@
   background-color: #ef4444;
   opacity: 0.5;
 }
+
+.pageWrapper {
+  height: 100%;
+  display: flex;
+  position: relative; 
+  overflow: hidden;   
+}

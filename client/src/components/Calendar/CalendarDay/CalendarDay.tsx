@@ -10,6 +10,7 @@ import {
 import type { UserHabit } from "../../../api/types/models/user-habit.model";
 import { HabitStatus, DayOfWeek } from "../../../api/types/enums";
 import styles from "./CalendarDay.module.css";
+import { getDayOfWeekFromDate } from "../../../utils/date.utils";
 
 interface Props {
   day: Date;
@@ -18,22 +19,9 @@ interface Props {
   onSelect: (date: Date) => void;
 }
 
-const getDayOfWeekEnum = (date: Date): DayOfWeek => {
-  const days: DayOfWeek[] = [
-    "SUNDAY",
-    "MONDAY",
-    "TUESDAY",
-    "WEDNESDAY",
-    "THURSDAY",
-    "FRIDAY",
-    "SATURDAY",
-  ];
-  return days[getDay(date)];
-};
-
 export const CalendarDay = ({ day, currentMonth, habits, onSelect }: Props) => {
   const dateKey = format(day, "yyyy-MM-dd");
-  const dayOfWeek = getDayOfWeekEnum(day);
+  const dayOfWeek = getDayOfWeekFromDate(day);
   const isCurrentMonth = isSameMonth(day, currentMonth);
   const isToday = isSameDay(day, new Date());
 
