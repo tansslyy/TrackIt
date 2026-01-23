@@ -1,0 +1,101 @@
+.dayCell {
+  height: 100%;
+  min-height: 0;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-md);
+  padding: 6px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dayCell:hover {
+  background: #ffffff;
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(59, 130, 246, 0.2);
+  z-index: 10;
+}
+
+.dayCell:active {
+  transform: scale(0.96);
+}
+
+.dayContent {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dayNumber {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-main);
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.today .dayNumber {
+  background-color: var(--text-main);
+  color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.otherMonth {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.dotsContainer {
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  padding-bottom: 2px;
+  flex: 1;
+  align-content: flex-end;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.dayCell:hover .dot {
+  transform: scale(1.2);
+}
+
+.completed {
+  background-color: var(--success);
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
+}
+
+.pending {
+  background-color: #d1d5db;
+}
+
+.skipped {
+  background-color: #ef4444;
+  opacity: 0.5;
+}
+
+.moreDots {
+  font-size: 8px;
+  color: var(--text-muted);
+  line-height: 4px;
+}
