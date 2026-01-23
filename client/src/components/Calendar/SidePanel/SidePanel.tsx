@@ -21,7 +21,6 @@ export const SidePanel = ({
   return (
     <div className={`${styles.panelContainer} ${isOpen ? styles.open : ""}`}>
       <div className={styles.panelContent}>
-        {/* Хедер панелі */}
         <div className={styles.header}>
           <div>
             <h3 className={styles.title}>Плани на день</h3>
@@ -34,7 +33,6 @@ export const SidePanel = ({
           </button>
         </div>
 
-        {/* Список завдань */}
         <div className={styles.list}>
           {loading ? (
             <div className={styles.stateMessage}>
@@ -49,7 +47,6 @@ export const SidePanel = ({
           ) : (
             habits.map((habit) => (
               <div key={habit.id} className={styles.card}>
-                {/* Кольорова смужка зліва (статус) */}
                 <div
                   className={`
                     ${styles.statusStrip} 
@@ -72,7 +69,6 @@ export const SidePanel = ({
                       {habit.title}
                     </h4>
 
-                    {/* Кастомний чекбокс */}
                     <div
                       className={`
                       ${styles.checkbox} 
