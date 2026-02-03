@@ -17,4 +17,5 @@ export interface HabitResponseDto {
   habit: HabitMetaFragment;
   logs?: HabitLogFragment[];
   days: HabitDayFragment[];
+  deletedAt?: string | null;
 }

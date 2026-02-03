@@ -4,8 +4,8 @@ import { toast } from "react-hot-toast";
 import styles from "./CreateHabitModal.module.css";
 import type { CreateHabitDto } from "../../../api/types/dtos/habits/create-habit.dto";
 import { DayOfWeek, RepeatTime } from "../../../api/types/enums";
-import type { LibraryCategoryDto } from "../../../api/types/dtos/habits/library-category.dto";
 import type { LibraryItemDto } from "../../../api/types/dtos/habits/library-response.dto";
+import type { LibraryCategoryModel } from "../../../api/types/models/library-category.model";
 
 interface CreateHabitModalProps {
   onClose: () => void;
@@ -59,14 +59,14 @@ export const CreateHabitModal = ({
   const [repeatType, setRepeatType] = useState<RepeatTime>(RepeatTime.DAILY);
   const [selectedDays, setSelectedDays] = useState<DayOfWeek[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [library, setLibrary] = useState<LibraryCategoryDto[]>([]);
+  const [library, setLibrary] = useState<LibraryCategoryModel[]>([]);
   const [habitId, setHabitId] = useState<string | null>(null);
 
   const toggleDay = (dayValue: DayOfWeek) => {
     setSelectedDays((prev) =>
       prev.includes(dayValue)
         ? prev.filter((d) => d !== dayValue)
-        : [...prev, dayValue]
+        : [...prev, dayValue],
     );
   };
 
@@ -148,7 +148,7 @@ export const CreateHabitModal = ({
                 <p className={styles.libraryLabel}>Швидкий старт:</p>
                 <div className={styles.chipsContainer}>
                   {library
-                    .flatMap((cat) => cat.habit)
+                    .flatMap((cat) => cat.habits || [])
                     .map((habit) => (
                       <button
                         key={habit.id}

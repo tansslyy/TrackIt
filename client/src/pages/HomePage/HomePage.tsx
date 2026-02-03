@@ -2,19 +2,13 @@ import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
 import styles from "./HomePage.module.css";
+import { Navbar } from "../../components/Layout/Navbar/Navbar";
 
 const translations = {
   ua: {
-    nav: {
-      login: "Увійти",
-      register: "Почати",
-      cabinet: "Дашборд",
-      habits: "Звички",
-      logout: "Вийти",
-    },
     heroGuest: {
       title: "Твій успіх\nу маленьких кроках",
-      desc: "Забудь про мотивацію — покладайся на дисципліну. TrackIt допомагає будувати корисні звички та ламати шкідливі. Просто і без зайвого шуму.",
+      desc: "Забудь про мотивацію — покладайся на дисципліну...",
       btn: "Створити акаунт безкоштовно",
       badges: ["📈 Статистика", "🔔 Нагадування", "🔥 Стріки"],
       features: {
@@ -23,30 +17,30 @@ const translations = {
           {
             icon: "🎯",
             title: "Фокус на дисципліні",
-            desc: "Не чекай мотивації. Будуй систему, яка працює щодня.",
+            desc: "Не чекай мотивації...",
           },
           {
             icon: "📊",
             title: "Наочна статистика",
-            desc: "Бачи свій прогрес у реальному часі. Дані мотивують.",
+            desc: "Бачи свій прогрес...",
           },
           {
             icon: "⚡",
             title: "Простота використання",
-            desc: "Ніяких зайвих функцій. Тільки те, що дійсно працює.",
+            desc: "Ніяких зайвих функцій...",
           },
         ],
       },
     },
     heroAuth: {
       title: "Раді бачити тебе знову!",
-      desc: "Сьогодні ідеальний день, щоб продовжити свою серію. Твої цілі самі себе не закриють 😉",
+      desc: "Сьогодні ідеальний день, щоб продовжити свою серію...",
       btnDashboard: "Мій день",
       btnHabits: "Керування звичками",
       stats: {
         streak: "Поточний стрік",
         habits: "Активних звичок",
-        completion: "Завершено сьогодні",
+        completion: "Завершено",
       },
     },
     mockups: {
@@ -61,16 +55,9 @@ const translations = {
     },
   },
   en: {
-    nav: {
-      login: "Log in",
-      register: "Get Started",
-      cabinet: "Dashboard",
-      habits: "Habits",
-      logout: "Log out",
-    },
     heroGuest: {
       title: "Build habits\nthat actually stick",
-      desc: "Stop relying on willpower alone. TrackIt helps you build discipline, break bad loops, and visualize your progress — one day at a time.",
+      desc: "Stop relying on willpower alone...",
       btn: "Start Tracking — It's Free",
       badges: ["📈 Insights", "🔔 Reminders", "🔥 Streaks"],
       features: {
@@ -79,24 +66,20 @@ const translations = {
           {
             icon: "🎯",
             title: "Focus on Discipline",
-            desc: "Don't wait for motivation. Build a system that works daily.",
+            desc: "Don't wait for motivation...",
           },
           {
             icon: "📊",
             title: "Visual Analytics",
-            desc: "See your progress in real-time. Data motivates.",
+            desc: "See your progress...",
           },
-          {
-            icon: "⚡",
-            title: "Dead Simple",
-            desc: "No bloat. Just what actually works.",
-          },
+          { icon: "⚡", title: "Dead Simple", desc: "No bloat..." },
         ],
       },
     },
     heroAuth: {
       title: "Welcome back!",
-      desc: "Your streak is waiting. Let's check off some wins and keep the momentum going.",
+      desc: "Your streak is waiting...",
       btnDashboard: "My Dashboard",
       btnHabits: "Manage Habits",
       stats: {
@@ -119,73 +102,15 @@ const translations = {
 };
 
 const HomePage = () => {
-  const { isAuth, user, logout } = useAuth();
-  const [lang, setLang] = useState<"en" | "ua">("en");
+  const { isAuth } = useAuth();
+  const [lang] = useState<"en" | "ua">("en");
   const t = translations[lang];
 
-  const mockStats = {
-    streak: 12,
-    habits: 5,
-    completion: 3,
-  };
+  const mockStats = { streak: 12, habits: 5, completion: 3 };
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <div className={styles.headerContainer}>
-          <div className={styles.logo}>
-            <span className={styles.logoIcon}>✓</span>
-            <span>TrackIt</span>
-          </div>
-
-          <nav className={styles.nav}>
-            <div className={styles.langSwitch}>
-              <button
-                className={`${styles.langBtn} ${
-                  lang === "ua" ? styles.langBtnActive : ""
-                }`}
-                onClick={() => setLang("ua")}
-                aria-label="Українська"
-              >
-                UA
-              </button>
-              <button
-                className={`${styles.langBtn} ${
-                  lang === "en" ? styles.langBtnActive : ""
-                }`}
-                onClick={() => setLang("en")}
-                aria-label="English"
-              >
-                EN
-              </button>
-            </div>
-
-            {isAuth ? (
-              <div className={styles.authButtons}>
-                <span className={styles.username}>{user?.username}</span>
-                <Link to="/habits" className={styles.loginBtn}>
-                  {t.nav.habits}
-                </Link>
-                <button onClick={logout} className={styles.logoutBtn}>
-                  {t.nav.logout}
-                </button>
-                <Link to="/dashboard" className={styles.registerBtn}>
-                  {t.nav.cabinet}
-                </Link>
-              </div>
-            ) : (
-              <div className={styles.authButtons}>
-                <Link to="/login" className={styles.loginBtn}>
-                  {t.nav.login}
-                </Link>
-                <Link to="/register" className={styles.registerBtn}>
-                  {t.nav.register}
-                </Link>
-              </div>
-            )}
-          </nav>
-        </div>
-      </header>
+      <Navbar />
 
       <main className={styles.main}>
         {isAuth ? (
@@ -267,7 +192,6 @@ const HomePage = () => {
                       <span>12/15 {t.mockups.days}</span>
                     </div>
                   </div>
-
                   <div className={styles.habitMockup}>
                     <h4>💧 {t.mockups.water}</h4>
                     <div className={styles.progressBar}>
@@ -281,7 +205,6 @@ const HomePage = () => {
                       <span>4/8</span>
                     </div>
                   </div>
-
                   <div className={styles.habitMockup}>
                     <h4>📚 {t.mockups.read}</h4>
                     <div className={styles.progressBar}>

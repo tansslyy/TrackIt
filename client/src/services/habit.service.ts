@@ -11,19 +11,18 @@ import type { UserHabit } from "../api/types/models/user-habit.model";
 import { HabitMapper } from "../utils/mappers/habit.mapper";
 
 export const HabitService = {
-  async getTodayHabits(): Promise<UserHabit[]> {
-    const { data } = await instance.get<HabitResponseDto[]>(`/habits/today`);
-    return data.map((dto) => HabitMapper.toDomain(dto));
-  },
-
   async getAll(): Promise<UserHabit[]> {
     const { data } = await instance.get<HabitResponseDto[]>(`/habits`);
     return data.map((dto) => HabitMapper.toDomain(dto));
   },
 
-  async toggleComplete(id: string): Promise<UserHabit> {
+  async toggleComplete(id: string, date?: string): Promise<UserHabit> {
+    const params = date ? { date } : {};
+
     const { data } = await instance.patch<HabitResponseDto>(
-      `/habits/${id}/toggle`
+      `/habits/${id}/toggle`,
+      {},
+      { params },
     );
     return HabitMapper.toDomain(data);
   },
@@ -36,15 +35,14 @@ export const HabitService = {
   async update(id: string, dto: Partial<CreateHabitDto>): Promise<UserHabit> {
     const { data } = await instance.patch<HabitResponseDto>(
       `/habits/${id}`,
-      dto
+      dto,
     );
     return HabitMapper.toDomain(data);
   },
 
   async getLibrary(): Promise<LibraryCategoryModel[]> {
-    const { data } = await instance.get<LibraryCategoryDto[]>(
-      "/habits/library"
-    );
+    const { data } =
+      await instance.get<LibraryCategoryDto[]>("/habits/library");
 
     return data.map(HabitMapper.toLibraryCategory);
   },
@@ -54,7 +52,7 @@ export const HabitService = {
       "/habits/calendar",
       {
         params,
-      }
+      },
     );
     return data.map((dto) => HabitMapper.toDomain(dto));
   },
@@ -63,7 +61,7 @@ export const HabitService = {
     const { data } = await instance.get<HabitResponseDto[]>("/habits/daily", {
       params,
     });
-    return data.map((dto) => HabitMapper.toDomain(dto));
+    return data.map((dto) => HabitMapper.toDomain(dto, params.date));
   },
 
   async delete(id: string): Promise<void> {

@@ -1,118 +1,109 @@
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end; 
-  margin-bottom: 2.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  animation: fadeInDown 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  align-items: center;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  width: 100%;
+  animation: fadeInDown 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 @keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .headerContent {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 4px;
 }
 
 .title {
-  font-size: 2.5rem; 
-  font-weight: 800;
+  font-size: 1.8rem;
+  font-weight: 700;
   margin: 0;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  
- 
-  background: linear-gradient(135deg, #ffffff 0%, #e9d5ff 100%);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  
-  filter: drop-shadow(0 2px 10px rgba(167, 139, 250, 0.2));
 }
 
 .dateRow {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  color: rgba(255, 255, 255, 0.7); 
-  font-size: 0.95rem;
+  gap: 6px;
+  color: #94a3b8;
+  font-size: 0.9rem;
   font-weight: 500;
 }
 
 .calendarIcon {
+  width: 16px;
+  height: 16px;
   opacity: 0.8;
-  color: #c4b5fd; 
+  color: #818cf8;
 }
 
-/* --- BUTTON STYLES --- */
+.dateText {
+  text-transform: capitalize;
+}
+
 .addButton {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.85rem 1.5rem;
-  
-  background: #ffffff;
-  color: #4f46e5;
-  
-  border: none;
-  border-radius: 14px; 
-  font-size: 0.95rem;
+  gap: 8px;
+  padding: 8px 16px;
+  height: 40px;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
-              0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+  transition: all 0.2s ease;
 }
 
 .addButton:hover {
-  transform: translateY(-2px);
-  background: #ffffff;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3),
-              0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(99, 102, 241, 0.5);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .addButton:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transform: scale(0.98);
 }
 
 .addIcon {
-  font-size: 1.25rem;
-  font-weight: 500;
+  font-size: 1.1rem;
   line-height: 1;
-  margin-top: -2px; 
 }
 
-/* --- MOBILE ADAPTIVE --- */
-
-@media (max-width: 768px) {
+@media (max-width: 600px) {
   .header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1.5rem;
-    padding-bottom: 1rem;
-    margin-bottom: 2rem;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
   }
 
   .title {
-    font-size: 2rem;
+    font-size: 1.4rem;
+  }
+  
+  .dateRow {
+    font-size: 0.8rem;
   }
   
   .addButton {
-    width: 100%;
-    justify-content: center;
-    padding: 1rem;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+  
+  .addIcon {
+    display: none;
   }
 }

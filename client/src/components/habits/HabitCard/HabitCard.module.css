@@ -3,15 +3,12 @@
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
-
   padding: 1.25rem;
   cursor: pointer;
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
   user-select: none;
 }
 
@@ -52,11 +49,9 @@
   width: 2.75rem;
   height: 2.75rem;
   min-width: 2.75rem;
-
   border-radius: 14px;
   border: 2px solid rgba(255, 255, 255, 0.2);
   background: rgba(0, 0, 0, 0.2);
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -91,18 +86,36 @@
 .textInfo {
   flex: 1;
   padding-top: 0.2rem;
-  padding-right: 20px; 
+  padding-right: 20px;
 }
 
 .title {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 600;
   color: #ffffff;
   margin: 0 0 0.35rem 0;
-  line-height: 1.3;
+  line-height: 1.4;
   transition: color 0.3s ease;
   display: flex;
   align-items: center;
+}
+
+.iconWrapper {
+  margin-right: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.5em;
+  font-size: 1.25em;
+  line-height: 1;
+  padding-bottom: 2px;
+}
+
+.titleText {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-top: 2px;
 }
 
 .description {
@@ -110,7 +123,6 @@
   color: rgba(255, 255, 255, 0.6);
   margin: 0;
   line-height: 1.4;
-
   display: -webkit-box;
   line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -129,18 +141,14 @@
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-
   padding: 0.35rem 0.75rem;
   border-radius: 10px;
-
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.02em;
-
   background: rgba(255, 255, 255, 0.08);
   color: rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.05);
-
   transition: all 0.2s ease;
 }
 
@@ -159,11 +167,9 @@
   top: 12px;
   right: 12px;
   z-index: 10;
-  
   display: flex;
   gap: 6px;
-  
-  opacity: 0; 
+  opacity: 0;
   transform: translateY(-5px);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -176,18 +182,14 @@
 .actionBtn {
   width: 32px;
   height: 32px;
-  
   display: flex;
   align-items: center;
   justify-content: center;
-  
-  background: rgba(255, 255, 255, 0.05); 
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 8px;
-  
   color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
-  
   transition: all 0.2s ease;
 }
 
@@ -224,7 +226,6 @@
   opacity: 1;
 }
 
-/* --- MOBILE ADAPTIVE --- */
 @media (max-width: 768px) {
   .card {
     padding: 1rem;
@@ -245,17 +246,16 @@
     font-size: 0.8rem;
   }
 
-  
   .actions {
     opacity: 1;
     transform: translateY(0);
     top: 10px;
     right: 10px;
   }
-  
+
   .actionBtn {
-    background: rgba(255, 255, 255, 0.03); /* Ще прозоріше на моб */
-    width: 36px; /* Більша зона кліку */
+    background: rgba(255, 255, 255, 0.03);
+    width: 36px;
     height: 36px;
   }
 }

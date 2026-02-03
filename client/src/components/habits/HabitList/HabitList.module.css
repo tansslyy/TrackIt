@@ -1,6 +1,7 @@
 .container {
   width: 100%;
   animation: fadeIn 0.6s ease-out;
+  padding-bottom: 40px;
 }
 
 @keyframes fadeIn {
@@ -17,7 +18,6 @@
   letter-spacing: -0.01em;
 }
 
-
 .habitGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -30,6 +30,20 @@
   align-items: center;
   min-height: 300px;
   width: 100%;
+}
+
+.loadingContainer::after {
+  content: "";
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .emptyState {
@@ -59,6 +73,7 @@
   justify-content: center;
   margin-bottom: 1.5rem;
   color: rgba(255, 255, 255, 0.4);
+  font-size: 2rem;
   
   transition: transform 0.3s ease;
 }
@@ -84,10 +99,9 @@
   max-width: 400px;
 }
 
-/* --- MOBILE ADAPTIVE --- */
 @media (max-width: 768px) {
   .habitGrid {
-    grid-template-columns: 1fr; 
+    grid-template-columns: 1fr;
     gap: 1rem;
   }
   

@@ -1,11 +1,19 @@
 import styles from "./DashboardHeader.module.css";
+import { format, isSameDay } from "date-fns";
+import { uk } from "date-fns/locale";
 
 interface DashboardHeaderProps {
   onAddHabit: () => void;
+  selectedDate: Date;
 }
 
-export const DashboardHeader = ({ onAddHabit }: DashboardHeaderProps) => {
-  const dateString = new Date().toLocaleDateString("uk-UA", {
+export const DashboardHeader = ({
+  onAddHabit,
+  selectedDate,
+}: DashboardHeaderProps) => {
+  const isToday = isSameDay(selectedDate, new Date());
+
+  const dateString = selectedDate.toLocaleDateString("uk-UA", {
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -18,7 +26,11 @@ export const DashboardHeader = ({ onAddHabit }: DashboardHeaderProps) => {
   return (
     <header className={styles.header}>
       <div className={styles.headerContent}>
-        <h1 className={styles.title}>Сьогодні</h1>
+        <h1 className={styles.title}>
+          {isToday
+            ? "Сьогодні"
+            : format(selectedDate, "d MMMM", { locale: uk })}
+        </h1>
         <div className={styles.dateRow}>
           <svg
             xmlns="http://www.w3.org/2000/svg"

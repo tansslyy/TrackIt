@@ -22,9 +22,10 @@ export const CalendarGrid = ({ currentMonth, habits, onSelectDate }: Props) => {
   const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
 
   const days = eachDayOfInterval({ start: startDate, end: endDate });
+  const weeksCount = Math.ceil(days.length / 7);
 
   return (
-    <div className={styles.gridWrapper}>
+    <div className={styles.gridContainer}>
       <div className={styles.weekDaysRow}>
         {["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"].map((d) => (
           <div key={d} className={styles.weekDay}>
@@ -33,7 +34,14 @@ export const CalendarGrid = ({ currentMonth, habits, onSelectDate }: Props) => {
         ))}
       </div>
 
-      <div className={styles.daysGrid}>
+      <div
+        className={styles.daysGrid}
+        style={
+          {
+            gridTemplateRows: `repeat(${weeksCount}, 1fr)`,
+          } as React.CSSProperties
+        }
+      >
         {days.map((day) => (
           <CalendarDay
             key={day.toISOString()}

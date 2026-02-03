@@ -1,55 +1,55 @@
 .dashboard {
-  /* Прибираємо width: 100vw та height: 100vh, якщо вони були */
-  width: 100%; 
-  height: 100%;
-  position: relative;
+  width: 100%;
+  height: auto;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
-  /* Градієнт залишаємо, але він тепер буде тільки в правій частині */
-  background: radial-gradient(circle at 50% 0%, #2e1065 0%, #0f172a 60%); 
-  overflow-y: auto; /* Дозволяємо скрол всередині */
+  position: relative;
 }
 
 .ambientBackground {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at 80% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%);
+  filter: blur(80px);
   z-index: 0;
-  background: 
-    radial-gradient(circle at 15% 50%, rgba(76, 29, 149, 0.4), transparent 45%), 
-    radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.15), transparent 40%),
-    linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-  pointer-events: none; 
+  pointer-events: none;
 }
 
 .contentContainer {
   position: relative;
-  z-index: 1; 
-  max-width: 1000px; 
-  margin: 0 auto;
-  padding: 2.5rem 2rem;
+  z-index: 1;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 32px 48px;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
+.navigationWrapper {
+  margin-bottom: 24px;
+}
+
+.contentContainer > :last-child {
+  flex: none;
+  overflow: visible;
+  margin-top: 24px;
+  padding-bottom: 60px;
+}
 
 @media (max-width: 1024px) {
   .contentContainer {
-    padding: 2rem 1.5rem;
+    padding: 24px 32px;
   }
 }
 
 @media (max-width: 768px) {
   .contentContainer {
-    padding: 1.5rem 1rem;
-    max-width: 100%;
+    padding: 16px;
   }
-}
-
-:global(:root) {
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-  --primary-accent: #a78bfa;
 }

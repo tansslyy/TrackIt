@@ -48,18 +48,17 @@ export class HabitsController {
   }
 
   @Patch(':id/toggle')
-  toggleCompletion(@Param('id') id: string, @Req() req: RequestWithUser) {
-    return this.habitsService.toggleCompletion(req.user.id, id);
+  toggleCompletion(
+    @Param('id') id: string,
+    @Req() req: RequestWithUser,
+    @Query('date') date?: string,
+  ) {
+    return this.habitsService.toggleCompletion(req.user.id, id, date);
   }
 
   @Get()
   findAll(@Req() req: RequestWithUser) {
     return this.habitsService.findAll(req.user.id);
-  }
-
-  @Get('today')
-  findToday(@Request() req) {
-    return this.habitsService.findToday(req.user.id);
   }
 
   @Get(':id')

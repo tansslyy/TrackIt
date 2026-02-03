@@ -2,12 +2,13 @@ import { Routes, Route } from "react-router-dom";
 import { DashboardPage } from "./pages/DashboardPage/DashboardPage";
 import { LoginPage } from "./pages/AuthPages/LoginPage";
 import { RegisterPage } from "./pages/AuthPages/RegisterPage";
-import HomePage from "./pages/HomePage/HomePage"; // 👈 Імпортуємо назад
+import HomePage from "./pages/HomePage/HomePage";
 import PrivateRoute from "./routes/PrivateRoute";
 import { ForgotPasswordPage } from "./pages/AuthPages/ForgotPasswordPage";
 import { ResetPasswordPage } from "./pages/AuthPages/ResetPasswordPage";
 import { HabitsPage } from "./pages/HabitsPage/HabitsPage";
 import { CalendarPage } from "./pages/CalendarPage/CalendarPage";
+import { MainLayout } from "./components/Layout/MainLayout";
 
 function App() {
   return (
@@ -18,9 +19,11 @@ function App() {
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
       <Route element={<PrivateRoute />}>
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/calendar" element={<CalendarPage />} />
-        <Route path="/habits" element={<HabitsPage />} />
+        <Route element={<MainLayout />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/calendar" element={<CalendarPage />} />
+          <Route path="/habits" element={<HabitsPage />} />
+        </Route>
       </Route>
     </Routes>
   );

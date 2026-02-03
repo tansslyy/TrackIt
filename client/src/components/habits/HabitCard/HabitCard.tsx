@@ -50,7 +50,6 @@ export const HabitCard = ({
       <div className={styles.cardGlow} />
 
       <div className={styles.actions}>
-        {/* Кнопка РЕДАГУВАТИ */}
         <button
           className={styles.actionBtn}
           onClick={handleEditClick}

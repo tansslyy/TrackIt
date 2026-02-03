@@ -6,6 +6,7 @@ import type { UserHabit } from "../../../api/types/models/user-habit.model";
 interface Props {
   date: Date;
   onClose: () => void;
+  onToggleHabit?: (habitId: string) => void;
   habits: UserHabit[];
   loading: boolean;
   isOpen: boolean;
@@ -17,6 +18,7 @@ export const SidePanel = ({
   habits,
   loading,
   isOpen,
+  onToggleHabit,
 }: Props) => {
   return (
     <div className={`${styles.panelContainer} ${isOpen ? styles.open : ""}`}>
@@ -37,24 +39,26 @@ export const SidePanel = ({
           {loading ? (
             <div className={styles.stateMessage}>
               <div className={styles.spinner}></div>
-              <span>Завантаження...</span>
+              <span>Завантаження планів...</span>
             </div>
           ) : habits.length === 0 ? (
             <div className={styles.stateMessage}>
-              <span style={{ fontSize: "2rem" }}>💤</span>
-              <span>Планів немає</span>
+              <span style={{ fontSize: "2.5rem", marginBottom: "8px" }}>
+                💤
+              </span>
+              <span>На цей день планів немає</span>
             </div>
           ) : (
             habits.map((habit) => (
-              <div key={habit.id} className={styles.card}>
+              <div
+                key={habit.id}
+                className={styles.card}
+                onClick={() => onToggleHabit && onToggleHabit(habit.id)}
+              >
                 <div
                   className={`
                     ${styles.statusStrip} 
-                    ${
-                      habit.isCompletedToday
-                        ? styles.completedStrip
-                        : styles.pendingStrip
-                    }
+                    ${habit.isCompletedToday ? styles.completedStrip : styles.pendingStrip}
                   `}
                 />
 
@@ -62,20 +66,31 @@ export const SidePanel = ({
                   <div className={styles.cardHeader}>
                     <h4
                       className={`
-                      ${styles.habitTitle} 
-                      ${habit.isCompletedToday ? styles.completedText : ""}
-                    `}
+                        ${styles.habitTitle} 
+                        ${habit.isCompletedToday ? styles.completedText : ""}
+                      `}
                     >
                       {habit.title}
                     </h4>
 
                     <div
                       className={`
-                      ${styles.checkbox} 
-                      ${habit.isCompletedToday ? styles.checked : ""}
-                    `}
+                        ${styles.checkbox} 
+                        ${habit.isCompletedToday ? styles.checked : ""}
+                      `}
                     >
-                      {habit.isCompletedToday && "✓"}
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
                     </div>
                   </div>
 

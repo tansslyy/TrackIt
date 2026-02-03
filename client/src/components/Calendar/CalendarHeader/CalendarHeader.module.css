@@ -2,61 +2,104 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(255, 255, 255, 0.8); 
-  backdrop-filter: blur(12px); 
-  padding: 16px 24px;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03); 
-  margin-bottom: 20px;
+  padding: 0 4px 24px 4px; 
+  width: 100%;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 5;
 }
 
 .titleGroup {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  gap: 2px;
+  filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.15));
 }
 
 .monthTitle {
-  font-size: 1.5rem;
+  font-size: 2.25rem;
   font-weight: 800;
-  color: #1f2937;
-  text-transform: capitalize;
   margin: 0;
+  line-height: 1.1;
+  text-transform: capitalize;
   letter-spacing: -0.02em;
-  line-height: 1.2;
+  background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
 .yearSubtitle {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #9ca3af;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #6366f1; 
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.9;
+  margin-top: 4px;
 }
 
 .navBtn {
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  border: 1px solid #e5e7eb;
-  background: #ffffff;
-  color: #4b5563;
-  font-size: 1.2rem;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px; 
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  color: #e2e8f0;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+.navBtn svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2.5px;
+  transition: transform 0.2s;
 }
 
 .navBtn:hover {
-  background: #3b82f6;
-  color: white;
-  border-color: #3b82f6;
+  background: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.4);
   transform: translateY(-2px);
-  box-shadow: 0 8px 15px rgba(59, 130, 246, 0.25);
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.25);
+}
+
+.navBtn:hover svg {
+  transform: scale(1.1);
 }
 
 .navBtn:active {
-  transform: scale(0.95);
+  transform: scale(0.96);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .monthTitle {
+    font-size: 1.75rem;
+  }
+  
+  .yearSubtitle {
+    font-size: 0.85rem;
+  }
+  
+  .navBtn {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+  
+  .navBtn svg {
+    width: 20px;
+    height: 20px;
+  }
 }
