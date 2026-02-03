@@ -51,12 +51,6 @@ export const CalendarPage = () => {
         h.id === habitId ? { ...h, isCompletedToday: !h.isCompletedToday } : h,
       ),
     );
-
-    try {
-      console.log(`Toggled habit ${habitId}`);
-    } catch (error) {
-      console.error("Error toggling habit", error);
-    }
   };
 
   return (
