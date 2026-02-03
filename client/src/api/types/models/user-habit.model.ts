@@ -14,6 +14,8 @@ export interface UserHabit {
   isCompletedToday: boolean;
   logs: Record<string, HabitStatus>;
 
+  deletedAt?: string | null;
+
   color?: string;
   icon?: string;
 }

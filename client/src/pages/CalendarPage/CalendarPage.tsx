@@ -6,13 +6,10 @@ import styles from "../../components/calendar/Calendar.module.css";
 import { CalendarGrid } from "../../components/Calendar/CalendarGrid";
 import { SidePanel } from "../../components/Calendar/SidePanel/SidePanel";
 import { CalendarHeader } from "../../components/Calendar/CalendarHeader/CalendarHeader";
-import { MainLayout } from "../../components/Layout/MainLayout";
 
 export const CalendarPage = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
-
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-
   const [calendarHabits, setCalendarHabits] = useState<UserHabit[]>([]);
   const [dailyHabits, setDailyHabits] = useState<UserHabit[]>([]);
   const [loadingDaily, setLoadingDaily] = useState(false);
@@ -48,35 +45,43 @@ export const CalendarPage = () => {
     fetchDaily();
   }, [selectedDate]);
 
+  const handleToggleHabit = async (habitId: string) => {
+    setDailyHabits((prev) =>
+      prev.map((h) =>
+        h.id === habitId ? { ...h, isCompletedToday: !h.isCompletedToday } : h,
+      ),
+    );
+
+    try {
+      console.log(`Toggled habit ${habitId}`);
+    } catch (error) {
+      console.error("Error toggling habit", error);
+    }
+  };
+
   return (
-    <MainLayout>
-      <div className={styles.pageWrapper}>
-        <div className={styles.mainContent}>
-          <div className={styles.headerWrapper}>
-            <CalendarHeader
-              currentMonth={currentMonth}
-              onPrev={() => setCurrentMonth(subMonths(currentMonth, 1))}
-              onNext={() => setCurrentMonth(addMonths(currentMonth, 1))}
-            />
-          </div>
-
-          <div className={styles.gridWrapper}>
-            <CalendarGrid
-              currentMonth={currentMonth}
-              habits={calendarHabits}
-              onSelectDate={(date) => setSelectedDate(date)}
-            />
-          </div>
-        </div>
-
-        <SidePanel
-          isOpen={!!selectedDate}
-          date={selectedDate || new Date()}
-          onClose={() => setSelectedDate(null)}
-          habits={dailyHabits}
-          loading={loadingDaily}
+    <div className={styles.pageWrapper}>
+      <div className={styles.mainContent}>
+        <CalendarHeader
+          currentMonth={currentMonth}
+          onPrev={() => setCurrentMonth(subMonths(currentMonth, 1))}
+          onNext={() => setCurrentMonth(addMonths(currentMonth, 1))}
+        />
+        <CalendarGrid
+          currentMonth={currentMonth}
+          habits={calendarHabits}
+          onSelectDate={(date) => setSelectedDate(date)}
         />
       </div>
-    </MainLayout>
+
+      <SidePanel
+        isOpen={!!selectedDate}
+        date={selectedDate || new Date()}
+        onClose={() => setSelectedDate(null)}
+        habits={dailyHabits}
+        loading={loadingDaily}
+        onToggleHabit={handleToggleHabit}
+      />
+    </div>
   );
 };

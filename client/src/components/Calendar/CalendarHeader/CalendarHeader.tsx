@@ -11,8 +11,20 @@ interface Props {
 export const CalendarHeader = ({ currentMonth, onPrev, onNext }: Props) => {
   return (
     <div className={styles.headerContainer}>
-      <button onClick={onPrev} className={styles.navBtn} aria-label="Назад">
-        ←
+      <button
+        onClick={onPrev}
+        className={styles.navBtn}
+        aria-label="Попередній місяць"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
       </button>
 
       <div className={styles.titleGroup}>
@@ -24,8 +36,20 @@ export const CalendarHeader = ({ currentMonth, onPrev, onNext }: Props) => {
         </span>
       </div>
 
-      <button onClick={onNext} className={styles.navBtn} aria-label="Вперед">
-        →
+      <button
+        onClick={onNext}
+        className={styles.navBtn}
+        aria-label="Наступний місяць"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
       </button>
     </div>
   );

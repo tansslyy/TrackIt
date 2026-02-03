@@ -46,6 +46,9 @@ export class HabitsService {
       });
     }
 
+    const startDate = new Date();
+    startDate.setHours(0, 0, 0, 0);
+
     const userHabitData = {
       userId: userId,
       habitId: habit.id,
@@ -64,29 +67,40 @@ export class HabitsService {
       throw new BadRequestException('HabitId is required for binding');
     }
 
+    const startDate = new Date();
+    startDate.setHours(0, 0, 0, 0);
     const userHabitData = {
       userId: userId,
       habitId: dto.habitId,
       repeatType: dto.repeatType,
-      startDate: new Date(),
+      startDate: startDate,
       days: dto.days?.length
-        ? { create: dto.days.map((day) => ({ DayOfWeek: day })) }
+        ? { create: dto.days.map((day) => ({ dayOfWeek: day })) }
         : undefined,
     };
     return this.userHabitRepo.create(userHabitData);
   }
 
-  async toggleCompletion(userId: string, habitId: string) {
+  async toggleCompletion(userId: string, habitId: string, dateStr?: string) {
     const userHabit = await this.userHabitRepo.findByIdWithRelations(habitId);
 
     if (!userHabit || userHabit.userId !== userId) {
       throw new BadRequestException('Habit not found or access denied');
     }
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const targetDate = dateStr ? new Date(dateStr) : new Date();
+    targetDate.setHours(0, 0, 0, 0);
 
-    const existingLog = await this.habitLogRepo.findBydate(habitId, today);
+    const reallyToday = new Date();
+    reallyToday.setHours(0, 0, 0, 0);
+
+    if (targetDate > reallyToday) {
+      throw new BadRequestException(
+        'Cannot toggle completion for future dates',
+      );
+    }
+
+    const existingLog = await this.habitLogRepo.findBydate(habitId, targetDate);
 
     if (existingLog) {
       await this.habitLogRepo.delete(existingLog.id);
@@ -94,7 +108,7 @@ export class HabitsService {
     } else {
       await this.habitLogRepo.create({
         userHabitId: habitId,
-        date: today,
+        date: targetDate,
         status: 'COMPLETED',
       });
       return { status: 'COMPLETED', message: 'Habit completed!' };
@@ -103,14 +117,6 @@ export class HabitsService {
 
   async findAll(userId: string) {
     return this.userHabitRepo.findAllActive(userId);
-  }
-
-  async findDaily(userId: string, query: GetMonthQueryDto) {
-    const targetDate = getStartOfDay(query.date || new Date());
-
-    const dayOfWeek = getDayName(targetDate);
-
-    return this.userHabitRepo.findDaily(userId, targetDate, dayOfWeek);
   }
 
   async findMonth(userId: string, query: GetMonthQueryDto) {
@@ -137,39 +143,15 @@ export class HabitsService {
     });
   }
 
-  async findToday(userId: string) {
-    const today = new Date();
-    const dayOfWeek = today
-      .toLocaleDateString('en-US', { weekday: 'long' })
-      .toUpperCase();
+  async findDaily(userId: string, query: GetMonthQueryDto) {
+    const targetDate = query.date ? new Date(query.date) : new Date();
+    targetDate.setHours(0, 0, 0, 0);
 
-    return this.prisma.userHabit.findMany({
-      where: {
-        userId: userId,
-        deletedAt: null,
-        OR: [
-          { repeatType: 'DAILY' },
-          {
-            repeatType: 'CUSTOM',
-            days: {
-              some: {
-                dayOfWeek: dayOfWeek as any,
-              },
-            },
-          },
-        ],
-      },
-      include: {
-        habit: true,
-        logs: {
-          where: {
-            date: {
-              gte: new Date(new Date().setHours(0, 0, 0, 0)),
-            },
-          },
-        },
-      },
-    });
+    const dayOfWeek = targetDate
+      .toLocaleDateString('en-US', { weekday: 'long' })
+      .toUpperCase() as DayOfWeek;
+
+    return this.userHabitRepo.findDaily(userId, targetDate, dayOfWeek);
   }
 
   async findOne(id: string) {

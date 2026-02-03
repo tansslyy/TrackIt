@@ -4,41 +4,41 @@ import styles from "./DashboardPage.module.css";
 import toast from "react-hot-toast";
 import { Dashboard } from "../../components/habits/Dashboard/Dashboard";
 import { ConfirmModal } from "../../components/habits/ConfirmModal/ConfirmModal";
-import { MainLayout } from "../../components/Layout/MainLayout"; // Імпортуємо Layout
 import type { UserHabit } from "../../api/types/models/user-habit.model";
+import { startOfToday, format } from "date-fns";
 
 export const DashboardPage = () => {
   const [habits, setHabits] = useState<UserHabit[]>([]);
   const [loading, setLoading] = useState(true);
   const [habitToDelete, setHabitToDelete] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState(startOfToday());
 
-  const loadTodayHabits = async () => {
+  const loadHabits = async () => {
     try {
       setLoading(true);
-      const data = await HabitService.getTodayHabits();
+      const dateStr = format(selectedDate, "yyyy-MM-dd");
+      const data = await HabitService.getDaily({ date: dateStr });
       setHabits(data);
     } catch (error) {
       console.error("Failed to load habits:", error);
+      toast.error("Не вдалося завантажити звички");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadTodayHabits();
-  }, []);
+    loadHabits();
+  }, [selectedDate]);
 
   const handleToggleComplete = async (habitId: string) => {
     try {
-      await HabitService.toggleComplete(habitId);
-      await loadTodayHabits();
+      const dateStr = format(selectedDate, "yyyy-MM-dd");
+      await HabitService.toggleComplete(habitId, dateStr);
+      await loadHabits();
     } catch (error) {
       console.error("Failed to toggle habit:", error);
     }
-  };
-
-  const requestDelete = (habitId: string) => {
-    setHabitToDelete(habitId);
   };
 
   const confirmDelete = async () => {
@@ -48,33 +48,33 @@ export const DashboardPage = () => {
       toast.success("Звичку видалено");
       setHabits((prev) => prev.filter((h) => h.id !== habitToDelete));
     } catch (error) {
-      console.error("Failed to delete habit", error);
       toast.error("Помилка видалення");
     } finally {
       setHabitToDelete(null);
     }
   };
 
-  // 👇 Обгортаємо контент в MainLayout
   return (
-    <MainLayout>
-      <div className={styles.pageContent}>
+    <div className={styles.pageContent}>
+      <div className={styles.dashboardContainer}>
         <Dashboard
           habits={habits}
           loading={loading}
           onToggleComplete={handleToggleComplete}
-          onDelete={requestDelete}
-          onRefresh={loadTodayHabits}
-        />
-
-        <ConfirmModal
-          isOpen={!!habitToDelete}
-          onClose={() => setHabitToDelete(null)}
-          onConfirm={confirmDelete}
-          title="Видалити звичку"
-          message="Ви впевнені? Весь прогрес буде втрачено."
+          onDelete={(id) => setHabitToDelete(id)}
+          onRefresh={loadHabits}
+          selectedDate={selectedDate}
+          onSelectDate={setSelectedDate}
         />
       </div>
-    </MainLayout>
+
+      <ConfirmModal
+        isOpen={!!habitToDelete}
+        onClose={() => setHabitToDelete(null)}
+        onConfirm={confirmDelete}
+        title="Видалити звичку"
+        message="Ви впевнені? Весь прогрес буде втрачено."
+      />
+    </div>
   );
 };

@@ -1,14 +1,12 @@
-import type { UserHabit } from "../../../api/types/models/user-habit.model";
-import { EmptyState } from "../../../ui/EmptyState/EmptyState";
-import { LoadingSpinner } from "../../../ui/LoadingSpinner/LoadingSpinner";
-import { HabitCard } from "../HabitCard/HabitCard";
 import styles from "./HabitList.module.css";
+import { HabitCard } from "../HabitCard/HabitCard";
+import type { UserHabit } from "../../../api/types/models/user-habit.model";
 
 interface HabitListProps {
   habits: UserHabit[];
   loading: boolean;
-  onToggleComplete: (habitId: string) => void;
-  onDelete: (habitId: string) => void;
+  onToggleComplete: (id: string) => void;
+  onDelete: (id: string) => void;
   onEdit: (habit: UserHabit) => void;
 }
 
@@ -20,22 +18,24 @@ export const HabitList = ({
   onEdit,
 }: HabitListProps) => {
   if (loading) {
-    return <LoadingSpinner />;
+    return <div className={styles.loadingContainer}></div>;
   }
 
   if (habits.length === 0) {
     return (
-      <EmptyState
-        title="Немає звичок на сьогодні"
-        description="Створіть свою першу звичку, щоб почати шлях до самовдосконалення."
-        icon="✨"
-      />
+      <div className={styles.emptyState}>
+        <div className={styles.emptyIconWrapper}>✨</div>
+        <h3 className={styles.emptyTitle}>Поки що пусто</h3>
+        <p className={styles.emptyText}>
+          Додайте свою першу звичку на цей день!
+        </p>
+      </div>
     );
   }
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.listTitle}>Мої звички</h2>
+      <h3 className={styles.listTitle}>Мої звички</h3>
 
       <div className={styles.habitGrid}>
         {habits.map((habit) => (

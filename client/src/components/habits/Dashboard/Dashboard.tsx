@@ -6,6 +6,8 @@ import { HabitList } from "../HabitList/HabitList";
 import { CreateHabitModal } from "../CreateHabitModal/CreateHabitModal";
 import type { UserHabit } from "../../../api/types/models/user-habit.model";
 import { EditHabitModal } from "../EditHabitModal/EditHabitModal";
+import { startOfToday, subDays } from "date-fns";
+import { WeekNavigation } from "../WeekNavigation/WeekNavigation";
 
 interface DashboardProps {
   habits: UserHabit[];
@@ -13,6 +15,8 @@ interface DashboardProps {
   onToggleComplete: (id: string) => void;
   onDelete: (id: string) => void;
   onRefresh: () => void;
+  selectedDate: Date;
+  onSelectDate: (date: Date) => void;
 }
 
 export const Dashboard = ({
@@ -21,9 +25,12 @@ export const Dashboard = ({
   onToggleComplete,
   onDelete,
   onRefresh,
+  selectedDate,
+  onSelectDate,
 }: DashboardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingHabit, setEditingHabit] = useState<UserHabit | null>(null);
+  const mindate = subDays(startOfToday(), 14);
 
   const handleCreateSuccess = () => {
     onRefresh();
@@ -47,7 +54,18 @@ export const Dashboard = ({
       <div className={styles.ambientBackground} />
 
       <div className={styles.contentContainer}>
-        <DashboardHeader onAddHabit={() => setIsModalOpen(true)} />
+        <DashboardHeader
+          onAddHabit={() => setIsModalOpen(true)}
+          selectedDate={selectedDate}
+        />
+
+        <div style={{ marginBottom: "20px" }}>
+          <WeekNavigation
+            selectedDate={selectedDate}
+            onSelectDate={onSelectDate}
+            minDate={mindate}
+          />
+        </div>
 
         <DashboardStats completed={completedCount} total={totalCount} />
 

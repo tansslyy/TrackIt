@@ -8,7 +8,7 @@ import type { UserHabit } from "../../api/types/models/user-habit.model";
 import { format, parseISO } from "date-fns";
 
 export class HabitMapper {
-  static toDomain(dto: HabitResponseDto): UserHabit {
+  static toDomain(dto: HabitResponseDto, targetDateStr?: string): UserHabit {
     if (!dto) {
       console.error("HabitMapper received empty DTO");
       return HabitMapper.getEmptyHabit();
@@ -27,8 +27,8 @@ export class HabitMapper {
       });
     }
 
-    const todayKey = format(new Date(), "yyyy-MM-dd");
-    const isCompletedToday = logsMap[todayKey] === HabitStatus.COMPLETED;
+    const checkDateKey = targetDateStr || format(new Date(), "yyyy-MM-dd");
+    const isCompletedToday = logsMap[checkDateKey] === HabitStatus.COMPLETED;
 
     const weekDays = dto.days?.map((d) => d.dayOfWeek) || [];
 
@@ -44,6 +44,7 @@ export class HabitMapper {
       activeDays: weekDays,
       isCompletedToday: isCompletedToday,
       logs: logsMap,
+      deletedAt: dto.deletedAt || null,
     };
   }
 

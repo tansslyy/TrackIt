@@ -2,15 +2,13 @@ import {
   format,
   isSameMonth,
   isSameDay,
-  getDay,
   isBefore,
   startOfDay,
   parseISO,
 } from "date-fns";
 import type { UserHabit } from "../../../api/types/models/user-habit.model";
-import { HabitStatus, DayOfWeek } from "../../../api/types/enums";
+import { DayOfWeek, HabitStatus } from "../../../api/types/enums";
 import styles from "./CalendarDay.module.css";
-import { getDayOfWeekFromDate } from "../../../utils/date.utils";
 
 interface Props {
   day: Date;
@@ -19,33 +17,58 @@ interface Props {
   onSelect: (date: Date) => void;
 }
 
+const getBackendDayOfWeek = (date: Date): DayOfWeek => {
+  const dayIndex = date.getDay();
+  const map: Record<number, DayOfWeek> = {
+    0: DayOfWeek.SUNDAY,
+    1: DayOfWeek.MONDAY,
+    2: DayOfWeek.TUESDAY,
+    3: DayOfWeek.WEDNESDAY,
+    4: DayOfWeek.THURSDAY,
+    5: DayOfWeek.FRIDAY,
+    6: DayOfWeek.SATURDAY,
+  };
+
+  return map[dayIndex];
+};
+
 export const CalendarDay = ({ day, currentMonth, habits, onSelect }: Props) => {
-  const dateKey = format(day, "yyyy-MM-dd");
-  const dayOfWeek = getDayOfWeekFromDate(day);
   const isCurrentMonth = isSameMonth(day, currentMonth);
   const isToday = isSameDay(day, new Date());
+  const currentDayOfWeek = getBackendDayOfWeek(day);
+  const normalizedDay = startOfDay(day);
+  const dateKey = format(day, "yyyy-MM-dd");
 
   const activeHabits = habits.filter((habit) => {
     const habitStart = startOfDay(
-      parseISO(habit.startDate || new Date().toISOString())
+      typeof habit.startDate === "string"
+        ? parseISO(habit.startDate)
+        : habit.startDate,
     );
-    const currentDay = startOfDay(day);
-    if (isBefore(currentDay, habitStart)) return false;
+    if (isBefore(normalizedDay, habitStart)) return false;
+
+    if (habit.deletedAt) {
+      const deletedAt = startOfDay(
+        typeof habit.deletedAt === "string"
+          ? parseISO(habit.deletedAt)
+          : habit.deletedAt,
+      );
+      if (isBefore(deletedAt, normalizedDay)) return false;
+    }
 
     if (habit.repeatType === "DAILY") return true;
-    if (habit.repeatType === "CUSTOM")
-      return habit.activeDays.includes(dayOfWeek);
+    if (habit.repeatType === "CUSTOM") {
+      return habit.activeDays?.includes(currentDayOfWeek);
+    }
     return false;
   });
 
   const getHabitStatus = (habit: UserHabit) => {
-    const status = habit.logs[dateKey] as any;
+    const status = habit.logs[dateKey];
     if (status === HabitStatus.COMPLETED) return "completed";
-    if (
-      isBefore(day, startOfDay(new Date())) &&
-      status !== HabitStatus.COMPLETED
-    )
+    if (isBefore(normalizedDay, startOfDay(new Date())) && !status) {
       return "skipped";
+    }
     return "pending";
   };
 
