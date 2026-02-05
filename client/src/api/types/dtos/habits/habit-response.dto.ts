@@ -13,6 +13,7 @@ export interface HabitResponseDto {
   repeatType: RepeatTime;
   startDate?: string;
   endDate?: string | null;
+  currentStreak?: number;
 
   habit: HabitMetaFragment;
   logs?: HabitLogFragment[];

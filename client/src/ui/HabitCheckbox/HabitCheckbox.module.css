@@ -1,0 +1,40 @@
+.checkbox {
+  border-radius: 8px; 
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  cursor: pointer;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0; 
+}
+
+.checkbox:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.checked {
+  background: var(--checkbox-color);
+  border-color: var(--checkbox-color);
+  transform: scale(1.05); 
+}
+
+.checked:hover {
+  border-color: var(--checkbox-color);
+  opacity: 0.9;
+}
+
+.checkIcon {
+  width: 65%;
+  height: 65%;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.checked .checkIcon {
+  opacity: 1;
+  transform: scale(1);
+}

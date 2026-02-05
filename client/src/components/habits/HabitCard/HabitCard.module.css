@@ -135,6 +135,7 @@
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
   justify-content: flex-end;
+  gap: 8px
 }
 
 .badge {
@@ -258,4 +259,29 @@
     width: 36px;
     height: 36px;
   }
+}
+
+
+.streakActive {
+  background: rgba(249, 115, 22, 0.15); 
+  color: #fb923c;
+  border: 1px solid rgba(249, 115, 22, 0.3);
+  font-weight: 700;
+}
+
+.streakActive .badgeIcon {
+  animation: flamePulse 2s infinite ease-in-out;
+  display: inline-block;
+}
+
+.streakEmpty {
+  background: rgba(255, 255, 255, 0.05);
+  color: #9ca3af;
+  opacity: 0.7;
+}
+
+@keyframes flamePulse {
+  0% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(251, 146, 60, 0)); }
+  50% { transform: scale(1.2); filter: drop-shadow(0 0 4px rgba(251, 146, 60, 0.6)); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(251, 146, 60, 0)); }
 }

@@ -1,12 +1,12 @@
 .header {
   position: sticky;
-  top: 20px;
+  top: 0;
   z-index: 100;
   width: 100%;
-  padding: 0 24px;
-  box-sizing: border-box;
+  padding: 1.5rem 2rem; 
   display: flex;
   justify-content: center;
+  transition: all 0.3s ease;
 }
 
 .glassContainer {
@@ -23,6 +23,21 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
   box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.transparentContainer {
+  width: 100%;
+  max-width: 1280px; 
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0; 
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
 }
 
 .logo {
@@ -31,19 +46,21 @@
   gap: 12px;
   color: #fff;
   font-weight: 800;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   letter-spacing: -0.02em;
+  text-decoration: none;
 }
 
 .logoIcon {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
+  font-size: 1.2rem;
+  color: white;
   box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
 }
 
@@ -96,21 +113,6 @@
 .actions {
   display: flex;
   align-items: center;
-  gap: 20px;
-}
-
-.langSwitch {
-  font-size: 0.85rem;
-  color: #64748b;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-}
-
-.activeLang {
-  color: #fff;
 }
 
 .logoutBtn {
@@ -133,34 +135,61 @@
   color: #ef4444;
 }
 
+.authLinks {
+  display: flex;
+  align-items: center;
+  gap: 24px; 
+}
+
+.loginLink {
+  color: #e2e8f0;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: opacity 0.2s ease;
+}
+
+.loginLink:hover {
+  opacity: 0.8;
+  color: white;
+}
+
+.registerLink {
+  background: white; 
+  color: #0f172a;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 10px 24px;
+  border-radius: 50px; 
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.registerLink:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
+  background: #f8fafc;
+}
+
 @media (max-width: 768px) {
   .header {
-    top: 0;
-    padding: 0;
+    padding: 1rem;
   }
   
   .glassContainer {
-    border-radius: 0;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    height: 60px;
+    border-radius: 16px;
     padding: 0 16px;
+    height: 60px;
   }
+
+  .navLink span { display: none; } 
+  .logoText { display: none; }
   
-  .navLink span {
-    display: none;
-  }
+  .authLinks { gap: 12px; }
   
-  .logoText {
-    display: none;
-  }
-  
-  .nav {
-    gap: 4px;
-  }
-  
-  .navLink {
-    padding: 8px 12px;
+  .registerLink {
+    padding: 8px 16px;
+    font-size: 0.9rem;
   }
 }
