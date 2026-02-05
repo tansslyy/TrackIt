@@ -22,7 +22,7 @@ export class UserHabitRepository extends BaseRepository<any> {
   async findByIdWithRelations(id: string) {
     return this.delegate.findUnique({
       where: { id },
-      include: { habit: true, days: true },
+      include: { habit: true, days: true, logs: true },
     });
   }
 
@@ -42,9 +42,7 @@ export class UserHabitRepository extends BaseRepository<any> {
       },
       include: {
         habit: true,
-        logs: {
-          where: { date: targetDate },
-        },
+        logs: true,
       },
     });
   }
