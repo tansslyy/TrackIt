@@ -17,6 +17,7 @@ import {
   getStartOfDay,
   getStartOfMonth,
 } from 'src/common/utils/date.utils';
+import { calculateCurrentStreak } from 'src/common/utils/streak.utils';
 
 @Injectable()
 export class HabitsService {
@@ -116,7 +117,11 @@ export class HabitsService {
   }
 
   async findAll(userId: string) {
-    return this.userHabitRepo.findAllActive(userId);
+    const habits = await this.userHabitRepo.findAllActive(userId);
+    return habits.map((habit) => ({
+      ...habit,
+      currentStreak: calculateCurrentStreak(habit.logs),
+    }));
   }
 
   async findMonth(userId: string, query: GetMonthQueryDto) {
@@ -151,7 +156,16 @@ export class HabitsService {
       .toLocaleDateString('en-US', { weekday: 'long' })
       .toUpperCase() as DayOfWeek;
 
-    return this.userHabitRepo.findDaily(userId, targetDate, dayOfWeek);
+    const habits = await this.userHabitRepo.findDaily(
+      userId,
+      targetDate,
+      dayOfWeek,
+    );
+
+    return habits.map((habit) => ({
+      ...habit,
+      currentStreak: calculateCurrentStreak(habit.logs),
+    }));
   }
 
   async findOne(id: string) {
@@ -159,7 +173,7 @@ export class HabitsService {
     if (!habit) {
       throw new NotFoundException(`Habit with ID ${id} not found`);
     }
-    return habit;
+    return { ...habit, currentStreak: calculateCurrentStreak(habit.logs) };
   }
 
   async update(userId: string, habitId: string, dto: UpdateHabitDto) {
