@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import styles from "./HomePage.module.css";
+import { UserAvatar } from "../../assets/images/UserAvatar";
 
 interface GuestHomeProps {
   t: any;
@@ -64,11 +65,7 @@ export const GuestHome = ({ t }: GuestHomeProps) => {
           {t.social?.users?.map((u: any, i: number) => (
             <div key={i} className={styles.testimonialCard}>
               <div className={styles.userProfile}>
-                <img
-                  src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i}`}
-                  alt="Avatar"
-                  className={styles.userAvatar}
-                />
+                <UserAvatar seed={i} />
                 <div>
                   <span className={styles.userName}>{u.name}</span>
                   <span className={styles.userRole}>{u.role}</span>

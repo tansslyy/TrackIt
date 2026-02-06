@@ -4,6 +4,7 @@ import styles from "./HomePage.module.css";
 import type { UserHabit } from "../../api/types/models/user-habit.model";
 import { HabitService } from "../../services/habit.service";
 import { DashboardStats } from "../../components/habits/DashboardStats/DashboardStats";
+import { DateHelper } from "../../utils/helpers/date.helper";
 
 interface AuthHomeProps {
   t: any;
@@ -19,7 +20,7 @@ export const AuthHome = ({ t }: AuthHomeProps) => {
     if (!nextHabit) setLoading(true);
 
     try {
-      const today = new Date().toISOString().split("T")[0];
+      const today = DateHelper.getToday();
 
       const data = await HabitService.getDaily({ date: today });
 
@@ -51,7 +52,7 @@ export const AuthHome = ({ t }: AuthHomeProps) => {
 
     setActionLoading(true);
     try {
-      const today = new Date().toISOString().split("T")[0];
+      const today = DateHelper.getToday();
 
       await HabitService.toggleComplete(nextHabit.id, today);
 

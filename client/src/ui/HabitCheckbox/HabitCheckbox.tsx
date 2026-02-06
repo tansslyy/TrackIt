@@ -1,5 +1,6 @@
 import type React from "react";
 import styles from "./HabitCheckbox.module.css";
+import { CheckIcon } from "../../assets/icons/CheckIcon";
 
 interface HabitCheckboxProps {
   isChecked: boolean;
@@ -26,17 +27,7 @@ export const HabitCheckbox = ({
         } as React.CSSProperties
       }
     >
-      <svg
-        className={styles.checkIcon}
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="3.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <polyline points="20 6 9 17 4 12" />
-      </svg>
+      <CheckIcon className={styles.checkIcon} />
     </div>
   );
 };
