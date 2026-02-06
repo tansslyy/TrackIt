@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import { DashboardPage } from "./pages/DashboardPage/DashboardPage";
 import { LoginPage } from "./pages/AuthPages/LoginPage";
 import { RegisterPage } from "./pages/AuthPages/RegisterPage";
-import HomePage from "./pages/HomePage/HomePage";
+import HomePage from "./pages/Home/HomePage";
 import PrivateRoute from "./routes/PrivateRoute";
 import { ForgotPasswordPage } from "./pages/AuthPages/ForgotPasswordPage";
 import { ResetPasswordPage } from "./pages/AuthPages/ResetPasswordPage";

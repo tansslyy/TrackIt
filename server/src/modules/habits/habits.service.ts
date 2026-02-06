@@ -229,4 +229,26 @@ export class HabitsService {
       deletedAt: new Date(),
     });
   }
+
+  async getUserStats(userId: string) {
+    const habits = await this.userHabitRepo.findAllActive(userId);
+    const totalHabits = habits.length;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const completedToday = habits.filter((h) =>
+      h.logs.some((l) => {
+        const logDate = new Date(l.date);
+        logDate.setHours(0, 0, 0, 0);
+        return (
+          logDate.getTime() === today.getTime() && l.status === 'COMPLETED'
+        );
+      }),
+    ).length;
+
+    const streaks = habits.map((h) => calculateCurrentStreak(h.logs));
+    const bestStreak = streaks.length > 0 ? Math.max(...streaks) : 0;
+
+    return { totalHabits, completedToday, bestStreak };
+  }
 }

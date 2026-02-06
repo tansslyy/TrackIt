@@ -66,6 +66,11 @@ export class HabitsController {
     return this.habitsService.findOne(id);
   }
 
+  @Get('stats')
+  getUserStats(@Req() req: RequestWithUser) {
+    return this.habitsService.getUserStats(req.user.id);
+  }
+
   @Patch(':id')
   update(
     @Param('id') id: string,

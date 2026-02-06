@@ -3,9 +3,14 @@ import styles from "./DashboardStats.module.css";
 interface DashboardStatsProps {
   completed: number;
   total: number;
+  streak: number;
 }
 
-export const DashboardStats = ({ completed, total }: DashboardStatsProps) => {
+export const DashboardStats = ({
+  completed,
+  total,
+  streak,
+}: DashboardStatsProps) => {
   const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
   const remaining = Math.max(0, total - completed);
 
@@ -71,6 +76,27 @@ export const DashboardStats = ({ completed, total }: DashboardStatsProps) => {
           <div className={styles.statContent}>
             <p className={styles.statValue}>{total}</p>
             <p className={styles.statLabel}>Всього</p>
+          </div>
+        </div>
+
+        <div className={styles.statCard}>
+          <div className={`${styles.statIconWrapper} ${styles.iconStreak}`}>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.1.243-2.143.7-3.088C5.992 12.288 8.04 13.57 8.5 14.5Z" />
+            </svg>
+          </div>
+          <div className={styles.statContent}>
+            <p className={styles.statValue}>{streak}</p>
+            <p className={styles.statLabel}>Найкращий стрік</p>
           </div>
         </div>
 

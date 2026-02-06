@@ -44,6 +44,7 @@ export class HabitMapper {
       activeDays: weekDays,
       isCompletedToday: isCompletedToday,
       logs: logsMap,
+      streak: dto.currentStreak || 0,
       deletedAt: dto.deletedAt || null,
     };
   }
@@ -79,6 +80,7 @@ export class HabitMapper {
       logs: {},
       color: "#ef4444",
       icon: "⚠️",
+      streak: 0,
     };
   }
 }

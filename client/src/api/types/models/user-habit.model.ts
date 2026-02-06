@@ -13,6 +13,7 @@ export interface UserHabit {
 
   isCompletedToday: boolean;
   logs: Record<string, HabitStatus>;
+  streak: number;
 
   deletedAt?: string | null;
 

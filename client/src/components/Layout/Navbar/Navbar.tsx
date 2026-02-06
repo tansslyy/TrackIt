@@ -11,7 +11,9 @@ export const Navbar = () => {
 
   return (
     <header className={styles.header}>
-      <div className={styles.glassContainer}>
+      <div
+        className={isAuth ? styles.glassContainer : styles.transparentContainer}
+      >
         <Link to="/" className={styles.logo}>
           <div className={styles.logoIcon}>✓</div>
           <span className={styles.logoText}>TrackIt</span>
