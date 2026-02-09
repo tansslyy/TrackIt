@@ -64,8 +64,4 @@ export const authService = {
     );
     return response.data;
   },
-
-  loginWithGoogle(): void {
-    window.location.href = "http://localhost:3000/auth/google";
-  },
 };

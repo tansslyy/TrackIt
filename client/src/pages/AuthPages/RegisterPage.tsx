@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./AuthPage.module.css";
-import { authService } from "../../services/auth.service";
 import { FcGoogle } from "react-icons/fc";
 
 export const RegisterPage = () => {
@@ -16,7 +15,7 @@ export const RegisterPage = () => {
   const [loading, setLoading] = useState(false);
 
   const handleGoogleLogin = () => {
-    authService.loginWithGoogle();
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

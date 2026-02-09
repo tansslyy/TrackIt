@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./AuthPage.module.css";
-import { authService } from "../../services/auth.service";
 import { FcGoogle } from "react-icons/fc";
 
 export const LoginPage = () => {
@@ -29,13 +28,11 @@ export const LoginPage = () => {
   };
 
   const handleGoogleLogin = () => {
-    authService.loginWithGoogle();
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
   };
 
   return (
     <div className={styles.page}>
-      {/* Прибрали перемикач мов */}
-
       <div className={styles.container}>
         <Link to="/" className={styles.logo}>
           <div className={styles.logoIconWrapper}>
