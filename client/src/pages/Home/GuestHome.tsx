@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import styles from "./HomePage.module.css";
-import { UserAvatar } from "../../assets/images/UserAvatar";
+import { UserAvatar } from "../../assets/images/UserAvatar/UserAvatar";
 
 interface GuestHomeProps {
   t: any;
