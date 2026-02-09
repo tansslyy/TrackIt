@@ -7,6 +7,8 @@ import { UserRepository } from 'src/database/repositories/user.repository';
 import { PrismaService } from 'src/database/prisma.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from 'src/security/strategies/jwt.strategy';
+import { UsersModule } from '../users/user.module';
+import { GoogleStrategy } from 'src/security/strategies/google.strategy';
 
 @Module({
   imports: [
@@ -20,9 +22,16 @@ import { JwtStrategy } from 'src/security/strategies/jwt.strategy';
         signOptions: { expiresIn: '7d' },
       }),
     }),
+    UsersModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, UserRepository, PrismaService, JwtStrategy],
+  providers: [
+    AuthService,
+    UserRepository,
+    PrismaService,
+    JwtStrategy,
+    GoogleStrategy,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

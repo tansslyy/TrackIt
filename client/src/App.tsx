@@ -9,6 +9,7 @@ import { ResetPasswordPage } from "./pages/AuthPages/ResetPasswordPage";
 import { HabitsPage } from "./pages/HabitsPage/HabitsPage";
 import { CalendarPage } from "./pages/CalendarPage/CalendarPage";
 import { MainLayout } from "./components/Layout/MainLayout";
+import { GoogleAuthSuccess } from "./pages/AuthPages/GoogleAuthSuccess";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+      <Route path="/auth/google-success" element={<GoogleAuthSuccess />} />
       <Route element={<PrivateRoute />}>
         <Route element={<MainLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />

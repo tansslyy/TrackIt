@@ -23,10 +23,14 @@ import { WEEK_IN_MS } from 'src/common/constants';
 import { JwtGuard } from 'src/security/guards';
 import { AccessTokenResponse } from './responses';
 import { use } from 'passport';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @Post('register')
   async register(
@@ -63,6 +67,22 @@ export class AuthController {
     this.setRefreshTokenCookie(res, tokens.refreshToken);
 
     return { accessToken: tokens.accessToken };
+  }
+
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  async googleAuth(@Req() req) {}
+
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  async googleAuthCallback(@Req() req, @Res() res: Response) {
+    const { accessToken, refreshToken, user } =
+      await this.authService.validateGoogleUser(req.user);
+    this.setRefreshTokenCookie(res, refreshToken);
+    const frontUrl = this.configService.get<string>('FRONT_BASE_URL');
+    return res.redirect(
+      `${frontUrl}/auth/google-success?accessToken=${accessToken}&userId=${user.id}`,
+    );
   }
 
   @UseGuards(JwtGuard)
