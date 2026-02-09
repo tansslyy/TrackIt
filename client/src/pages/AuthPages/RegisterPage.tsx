@@ -2,73 +2,33 @@ import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./AuthPage.module.css";
-
-const translations = {
-  ua: {
-    title: "Новий старт",
-    subtitle: "Створи акаунт, щоб почати контролювати свої звички.",
-    fields: {
-      username: "Username",
-      email: "Email",
-      password: "Password",
-      confirm: "Підтвердження",
-      btn: "Зареєструватися",
-    },
-    errors: {
-      match: "Паролі не співпадають",
-      length: "Пароль надто короткий (мін. 6 символів)",
-    },
-    footer: {
-      text: "Вже є акаунт?",
-      link: "Увійти",
-    },
-  },
-  en: {
-    title: "Join TrackIt",
-    subtitle: "Create an account to start building better discipline.",
-    fields: {
-      username: "Username",
-      email: "Email",
-      password: "Password",
-      confirm: "Confirm Password",
-      btn: "Create Account",
-    },
-    errors: {
-      match: "Passwords do not match",
-      length: "Password is too short (min 6 chars)",
-    },
-    footer: {
-      text: "Already have an account?",
-      link: "Sign in",
-    },
-  },
-};
+import { FcGoogle } from "react-icons/fc";
 
 export const RegisterPage = () => {
-  const [lang, setLang] = useState<"en" | "ua">("en");
-  const t = translations[lang];
-
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
   const { register } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     if (password !== confirmPassword) {
-      setError(t.errors.match);
+      setError("Passwords do not match");
       return;
     }
 
     if (password.length < 6) {
-      setError(t.errors.length);
+      setError("Password is too short (min 6 chars)");
       return;
     }
 
@@ -81,7 +41,7 @@ export const RegisterPage = () => {
       const serverMessage = err.response?.data?.message;
       if (serverMessage) {
         setError(
-          Array.isArray(serverMessage) ? serverMessage.join("") : serverMessage
+          Array.isArray(serverMessage) ? serverMessage.join("") : serverMessage,
         );
       } else {
         setError(err.message || "Something went wrong");
@@ -93,27 +53,6 @@ export const RegisterPage = () => {
 
   return (
     <div className={styles.page}>
-      <div className={styles.langWrapper}>
-        <div className={styles.langSwitch}>
-          <button
-            className={`${styles.langBtn} ${
-              lang === "ua" ? styles.langBtnActive : ""
-            }`}
-            onClick={() => setLang("ua")}
-          >
-            UA
-          </button>
-          <button
-            className={`${styles.langBtn} ${
-              lang === "en" ? styles.langBtnActive : ""
-            }`}
-            onClick={() => setLang("en")}
-          >
-            EN
-          </button>
-        </div>
-      </div>
-
       <div className={styles.container}>
         <Link to="/" className={styles.logo}>
           <div className={styles.logoIconWrapper}>
@@ -124,8 +63,10 @@ export const RegisterPage = () => {
 
         <div className={styles.card}>
           <div className={styles.cardHeader}>
-            <h1 className={styles.title}>{t.title}</h1>
-            <p className={styles.subtitle}>{t.subtitle}</p>
+            <h1 className={styles.title}>Create an account</h1>
+            <p className={styles.subtitle}>
+              Start building better habits and discipline today.
+            </p>
           </div>
 
           {error && (
@@ -134,73 +75,92 @@ export const RegisterPage = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className={styles.form}>
-            <div className={styles.inputGroup}>
-              <label className={styles.label}>{t.fields.username}</label>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className={styles.input}
-                required
-                disabled={loading}
-              />
-            </div>
-
-            <div className={styles.inputGroup}>
-              <label className={styles.label}>{t.fields.email}</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className={styles.input}
-                required
-                disabled={loading}
-              />
-            </div>
-
-            <div className={styles.inputGroup}>
-              <label className={styles.label}>{t.fields.password}</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className={styles.input}
-                required
-                disabled={loading}
-              />
-            </div>
-
-            <div className={styles.inputGroup}>
-              <label className={styles.label}>{t.fields.confirm}</label>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className={styles.input}
-                required
-                disabled={loading}
-              />
-            </div>
-
+          <div className={styles.form}>
             <button
-              type="submit"
-              className={styles.submitBtn}
-              disabled={loading}
+              type="button"
+              className={styles.googleBtn}
+              onClick={handleGoogleLogin}
             >
-              {loading ? (
-                <span className={styles.spinner}></span>
-              ) : (
-                t.fields.btn
-              )}
+              <FcGoogle size={22} />
+              <span>Sign up with Google</span>
             </button>
-          </form>
+
+            <div className={styles.divider}>
+              <span>or register with email</span>
+            </div>
+
+            <form onSubmit={handleSubmit}>
+              <div className={styles.inputGroup}>
+                <label className={styles.label}>Username</label>
+                <input
+                  type="text"
+                  placeholder="Choose a username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className={styles.input}
+                  required
+                  disabled={loading}
+                />
+              </div>
+
+              <div className={styles.inputGroup}>
+                <label className={styles.label}>Email</label>
+                <input
+                  type="email"
+                  placeholder="name@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={styles.input}
+                  required
+                  disabled={loading}
+                />
+              </div>
+
+              <div className={styles.inputGroup}>
+                <label className={styles.label}>Password</label>
+                <input
+                  type="password"
+                  placeholder="Create a password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={styles.input}
+                  required
+                  disabled={loading}
+                />
+              </div>
+
+              <div className={styles.inputGroup}>
+                <label className={styles.label}>Confirm Password</label>
+                <input
+                  type="password"
+                  placeholder="Repeat your password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className={styles.input}
+                  required
+                  disabled={loading}
+                />
+              </div>
+
+              <button
+                type="submit"
+                className={styles.submitBtn}
+                disabled={loading}
+              >
+                {loading ? (
+                  <span className={styles.spinner}></span>
+                ) : (
+                  "Create Account"
+                )}
+              </button>
+            </form>
+          </div>
 
           <div className={styles.footer}>
             <p className={styles.footerText}>
-              {t.footer.text}{" "}
+              Already have an account?{" "}
               <Link to="/login" className={styles.footerLink}>
-                {t.footer.link}
+                Sign in
               </Link>
             </p>
           </div>

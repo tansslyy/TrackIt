@@ -14,7 +14,7 @@ export const authService = {
   async register(data: RegisterDto): Promise<AuthResponseDto> {
     const { data: responseData } = await instance.post<AuthResponseDto>(
       "/auth/register",
-      data
+      data,
     );
     return responseData;
   },
@@ -22,7 +22,7 @@ export const authService = {
   async login(data: LoginDto): Promise<AuthResponseDto> {
     const { data: responseData } = await instance.post<AuthResponseDto>(
       "/auth/login",
-      data
+      data,
     );
     return responseData;
   },
@@ -37,22 +37,22 @@ export const authService = {
   },
 
   async forgotPassword(
-    data: ForgotPasswordRequestDto
+    data: ForgotPasswordRequestDto,
   ): Promise<GenericResponseDto> {
     const response = await instance.post<GenericResponseDto>(
       "/auth/forgotPassword",
-      data
+      data,
     );
     return response.data;
   },
 
   async resetPassword(
     token: string,
-    data: ResetPasswordRequestDto
+    data: ResetPasswordRequestDto,
   ): Promise<GenericResponseDto> {
     const response = await instance.post<GenericResponseDto>(
       `/auth/resetPassword/${token}`,
-      data
+      data,
     );
     return response.data;
   },
@@ -60,7 +60,7 @@ export const authService = {
   async updatePassword(data: UpdatePasswordDto): Promise<AuthResponseDto> {
     const response = await instance.post<AuthResponseDto>(
       "/auth/updatePassword",
-      data
+      data,
     );
     return response.data;
   },

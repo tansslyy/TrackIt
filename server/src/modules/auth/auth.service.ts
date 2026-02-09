@@ -17,7 +17,7 @@ import { IdenticalPasswordException } from 'src/common/exceptions';
 import { RefreshTokenRepository } from 'src/database/repositories/refresh-token.repository';
 import { EmailTokenRepository } from 'src/database/repositories/email-token.repository';
 import { TokenType } from '@prisma/client';
-import { resolve } from 'path';
+import { UserService } from '../users/user.service';
 
 @Injectable()
 export class AuthService {
@@ -28,6 +28,7 @@ export class AuthService {
     private prisma: PrismaService,
     private readonly refreshTokenRepository: RefreshTokenRepository,
     private readonly emailTokenRepository: EmailTokenRepository,
+    private userService: UserService,
   ) {}
 
   async getTokens(userId: string, email: string) {
@@ -54,6 +55,10 @@ export class AuthService {
 
     if (!user) {
       throw new EntityNotFoundException('User');
+    }
+
+    if (!user.passwordHash) {
+      throw new UnauthorizedException('Please login via google');
     }
 
     const matchPassword = await this.checkPassword(password, user.passwordHash);
@@ -97,6 +102,9 @@ export class AuthService {
   async login({ username, password }: LoginDto) {
     const user = await this.userRepository.findByUsername(username);
     if (!user) throw new NotRegisteredException();
+    if (!user.passwordHash) {
+      throw new UnauthorizedException('Invalid credentials (try Google login)');
+    }
 
     const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
     if (!isPasswordValid)
@@ -151,6 +159,12 @@ export class AuthService {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new UnauthorizedException('User not found');
+    }
+
+    if (!user.passwordHash) {
+      throw new ForbiddenException(
+        'You logged in via Google. You cannot change password.',
+      );
     }
 
     const isOldPasswordCorrect = await bcrypt.compare(
@@ -283,5 +297,28 @@ export class AuthService {
     if (tokenExists) {
       await this.emailTokenRepository.delete(tokenExists.token);
     }
+  }
+
+  async validateGoogleUser(details: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    picture: string;
+  }) {
+    let user = await this.userService.findByEmail(details.email);
+
+    if (!user) {
+      user = await this.userService.create({
+        email: details.email,
+        firstName: details.firstName,
+        lastName: details.lastName,
+        avatarUrl: details.picture,
+        provider: 'google',
+      });
+    }
+
+    const tokens = await this.getTokens(user.id, user.email);
+    await this.saveRefreshToken(user.id, tokens.refreshToken);
+    return { ...tokens, user };
   }
 }
