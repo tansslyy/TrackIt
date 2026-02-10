@@ -3,6 +3,7 @@ import { UserService } from './user.service';
 import { JwtGuard } from 'src/security/guards';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Request } from 'express';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Controller('users')
 export class UserController {
@@ -15,5 +16,13 @@ export class UserController {
     const updateUser = await this.userService.update(userId, body);
     const { passwordHash, ...result } = updateUser;
     return result;
+  }
+
+  @UseGuards(JwtGuard)
+  @Patch('me/password')
+  async changePassword(@Req() req: Request, @Body() dto: ChangePasswordDto) {
+    const userId = (req.user as any).id;
+    await this.userService.updatePassword(userId, dto);
+    return { message: 'Password updated successfully' };
   }
 }

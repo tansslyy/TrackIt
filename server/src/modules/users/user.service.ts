@@ -1,8 +1,16 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserRepository } from 'src/database/repositories/user.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserEntity } from 'src/database/entities';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { IdenticalPasswordException } from 'src/common/exceptions';
+import * as bcrypt from 'bcryptjs';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class UserService {
@@ -30,5 +38,42 @@ export class UserService {
     }
 
     return this.userRepository.update(userId, dto);
+  }
+
+  async updatePassword(userId: string, dto: ChangePasswordDto) {
+    const { oldPassword, newPassword } = dto;
+
+    if (oldPassword === newPassword) {
+      throw new IdenticalPasswordException(
+        'New password cannot be the same as old password',
+      );
+    }
+
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    if (!user.passwordHash) {
+      throw new ForbiddenException(
+        'You logged in via Google. You cannot change password.',
+      );
+    }
+
+    const isOldPasswordCorrect = await bcrypt.compare(
+      oldPassword,
+      user.passwordHash,
+    );
+
+    if (!isOldPasswordCorrect) {
+      throw new ForbiddenException('Wrong old password');
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const newPasswordHash = await bcrypt.hash(newPassword, salt);
+
+    await this.userRepository.update(userId, {
+      passwordHash: newPasswordHash,
+    });
   }
 }
