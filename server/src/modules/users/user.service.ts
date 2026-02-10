@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserRepository } from 'src/database/repositories/user.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserEntity } from 'src/database/entities';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -17,5 +18,17 @@ export class UserService {
 
   async findOne(id: string): Promise<UserEntity | null> {
     return this.userRepository.findById(id);
+  }
+
+  async update(userId: string, dto: UpdateUserDto): Promise<UserEntity> {
+    if (dto.email) {
+      const existingUser = await this.userRepository.findByEmail(dto.email);
+
+      if (existingUser && existingUser.id !== userId) {
+        throw new BadRequestException('This email  is already taken');
+      }
+    }
+
+    return this.userRepository.update(userId, dto);
   }
 }
