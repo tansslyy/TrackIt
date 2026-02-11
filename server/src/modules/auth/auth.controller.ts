@@ -85,22 +85,6 @@ export class AuthController {
     );
   }
 
-  @UseGuards(JwtGuard)
-  @Post('updatePassword')
-  async updatePassword(
-    @Body() body: UpdatePasswordDTO,
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
-  ): Promise<AccessTokenResponse> {
-    const userId = (req.user as any).id;
-    const tokens = await this.authService.updatePassword(body, userId);
-    this.setRefreshTokenCookie(res, tokens.refreshToken);
-    return {
-      accessToken: tokens.accessToken,
-      message: 'Password updated successfully',
-    };
-  }
-
   @Post('forgotPassword')
   async forgotPassword(
     @Body() body: ForgotPasswordDTO,
