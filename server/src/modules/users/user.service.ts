@@ -76,4 +76,8 @@ export class UserService {
       passwordHash: newPasswordHash,
     });
   }
+
+  async updateAvatar(userId: string, avatarUrl: string) {
+    return this.userRepository.update(userId, { avatarUrl: avatarUrl });
+  }
 }
