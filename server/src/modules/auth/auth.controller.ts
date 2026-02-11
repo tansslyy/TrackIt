@@ -108,12 +108,6 @@ export class AuthController {
     return { message: 'Logged out successfully' };
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @Get('me')
-  async me(@Req() req: Request) {
-    return req.user;
-  }
-
   private setRefreshTokenCookie(res: Response, token: string) {
     res.cookie('refreshToken', token, {
       httpOnly: true,

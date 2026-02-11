@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
   FileTypeValidator,
+  Get,
   MaxFileSizeValidator,
   ParseFilePipe,
   Patch,
@@ -26,7 +28,14 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @UseGuards(JwtGuard)
-  @Patch('me')
+  @Get('me')
+  async me(@Req() req: Request) {
+    const userId = (req.user as any).id;
+    return this.userService.findOne(userId);
+  }
+
+  @UseGuards(JwtGuard)
+  @Patch('me/update')
   async updateProfile(@Req() req: Request, @Body() body: UpdateUserDto) {
     const userId = (req.user as any).id;
     const updateUser = await this.userService.update(userId, body);
@@ -49,10 +58,12 @@ export class UserController {
       storage: diskStorage({
         destination: './uploads',
         filename: (req, file, callback) => {
-          const uniqueSuffix =
-            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          const userId = (req as any).user?.id;
+
+          const timestamp = Date.now();
           const ext = extname(file.originalname);
-          const filename = `avatar-${uniqueSuffix}${ext}`;
+
+          const filename = `user-${userId}-${timestamp}${ext}`;
           callback(null, filename);
         },
       }),
@@ -77,5 +88,13 @@ export class UserController {
     await this.userService.updateAvatar(userId, avatarUrl);
 
     return { message: 'Avatar uploaded successfully', avatarUrl: avatarUrl };
+  }
+
+  @UseGuards(JwtGuard)
+  @Delete('me/avatar')
+  async removeAvatar(@Req() req: Request) {
+    const userId = (req.user as any).id;
+    await this.userService.removeAvatar(userId);
+    return { message: 'Avatar removed successfully' };
   }
 }
