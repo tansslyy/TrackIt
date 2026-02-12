@@ -87,6 +87,22 @@ export class UserService {
   }
 
   async updateAvatar(userId: string, avatarUrl: string) {
+    const user = await this.userRepository.findById(userId);
+
+    if (user?.avatarUrl) {
+      const oldFileName = user.avatarUrl.split('/').pop();
+
+      if (oldFileName) {
+        const oldFilePath = path.join(process.cwd(), 'uploads', oldFileName);
+
+        try {
+          await fs.unlink(oldFilePath);
+        } catch (error) {
+          console.warn('Old file not found on disk, skipping deletion');
+        }
+      }
+    }
+
     return this.userRepository.update(userId, { avatarUrl: avatarUrl });
   }
 
