@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UserRepository } from 'src/database/repositories/user.repository';
@@ -11,6 +12,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { IdenticalPasswordException } from 'src/common/exceptions';
 import * as bcrypt from 'bcryptjs';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import path from 'path';
+import * as fs from 'fs/promises';
 
 @Injectable()
 export class UserService {
@@ -25,7 +28,13 @@ export class UserService {
   }
 
   async findOne(id: string): Promise<UserEntity | null> {
-    return this.userRepository.findById(id);
+    const user = await this.userRepository.findById(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const { passwordHash, ...result } = user;
+    return result;
   }
 
   async update(userId: string, dto: UpdateUserDto): Promise<UserEntity> {
@@ -75,5 +84,44 @@ export class UserService {
     await this.userRepository.update(userId, {
       passwordHash: newPasswordHash,
     });
+  }
+
+  async updateAvatar(userId: string, avatarUrl: string) {
+    const user = await this.userRepository.findById(userId);
+
+    if (user?.avatarUrl) {
+      const oldFileName = user.avatarUrl.split('/').pop();
+
+      if (oldFileName) {
+        const oldFilePath = path.join(process.cwd(), 'uploads', oldFileName);
+
+        try {
+          await fs.unlink(oldFilePath);
+        } catch (error) {
+          console.warn('Old file not found on disk, skipping deletion');
+        }
+      }
+    }
+
+    return this.userRepository.update(userId, { avatarUrl: avatarUrl });
+  }
+
+  async removeAvatar(userId: string) {
+    const user = await this.findOne(userId);
+
+    if (user && user.avatarUrl) {
+      const fileName = user.avatarUrl.split('/').pop();
+      if (fileName) {
+        const filePath = path.join(process.cwd(), 'uploads', fileName);
+
+        try {
+          await fs.unlink(filePath);
+        } catch (error) {
+          console.error(`File not found or could not be deleted: ${filePath}`);
+        }
+      }
+    }
+
+    return this.userRepository.update(userId, { avatarUrl: null });
   }
 }
